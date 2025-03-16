@@ -1,6 +1,6 @@
 # Blog
 
-Blog with .mdx and bilingual support. Current language setup is /en and /ko. Create new posts by creating a directory with mdx files inside contents. directory, mdx name and slug is recommended to be the same. automatically fetches and imports components used by mdx. components must be in the same directory as mdx file.
+Next.js blog with .mdx and bilingual support. Current language setup is /en and /ko. Create new posts by creating a directory with mdx files inside contents. directory, mdx name and slug is recommended to be the same. automatically fetches and imports components used by mdx. components must be in the same directory as mdx file.
 
 ## Features
 

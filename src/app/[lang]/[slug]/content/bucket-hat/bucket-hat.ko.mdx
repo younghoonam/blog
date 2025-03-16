@@ -1,0 +1,45 @@
+---
+title: "Bucket Hat Pattern Generator"
+date: "2025-03-15"
+slug: "bucket-hat"
+---
+
+## 1.introduction
+
+this is a project where you can generate sewing patterns of a bucket hat with imput parameters such as size, shape, and seam allowance. it also features a 3d preview of the generated hat with physics simulation.
+
+the project aims to present an understanding of the final product of the sewing pattern before cutting and sewing. one of the main difficulties of sewing from patterns as a hobbiest is that its hard to have an idea of how the final product will look like before completion. slight changes to length and angles of the pattern can lead to significant changes to the final form.
+
+i decided to build this because i sew quite a few bucket hats for personal use and gifting. bucket hats has a wide variety of shapes and it is difficult to how it will look by just looking at the pattern. for example the curvature of the arc of the brim pattern changes how much the brim is flared from the hat. the angle formed by the curvature is hard to visualize unless you cut it up and put it together. three dimensional garments such hats suffer a lot from this difficulty and thats why i decided to build this project
+
+## 2. features & functionality
+
+the project features a configuration panel with parameter inputs, a three dimensional model of the hat with cloth simulation, and a preview of the sewing pattern. users can input their measurements such as head diameter, head height, brim width, brim angle and seam allowance. the sewing pattern and 3d model is generated with the calculations with theses inputs and are changed in real time for an simulatanious interaction. the 3d model can be applied with a physics engine and simulate how that hat sits on a head with the ability to change physics parameters such as fabric stiffness, weight and gravity. than the sewing pattern can be exported to pdf with desired paper size.
+
+### 2-1. technologies
+
+- reactjs - framework
+- nextjs
+- threejs - 3d view
+- react three fiber - threejs react renderer
+- cannonjs - physics engine
+- jspdf - pdf generation
+- svg2pdf - svg to pdf jspdf plugin
+- d3js - svg generation
+- firebase - feedback database
+- figma - design
+- react-tooltips - tooltips
+
+### 3. design & ux
+
+i took inspiration from old school sewing books, line drawing aesthetics, analog dials and sliders from the mid-century modern electronics, notably dieter rams designs. the interactive ui elements are distinctly borders and with a drop shadow to indicate interactivity. the wordmark is EB Garamond and heading and paragraph Inter.
+
+the layout of the desktop version is a general configuration setup - a large view and a panel on one side. one of the responsive design challenges was to make a comprehensive configuration layout for mobile. a mobile screen is too small to divide into panel and view sections. a limited area for the interactive zone for the parameters can be stifling and decrease usability. so i decieded to change the 3d viewport into a floating viewport once the page is scrolled down. although the floating viewport still covers a significant amount of interactive area, users can still sense what elementes are behind it with the uncovered areas.
+
+### 4. development process
+
+i started out by building core functions. taking a few input parameters(head diameter, height, brim width, angle) and using them to calculate variables needed to generate a sewing pattern. i used the svg generating functions of d3js to draw the pattern. i made shape modifying functions along the way such as offset shape and centering. jspdf was used for pdf generation. svg2pdf was needed as a jspdf plugin to insert svg into the pdf document.
+
+### 5. challenges
+
+one of the opening challenges was the algorithm of generating the development(unfolded planar figure) of a elliptical cone. the traditional drawing a development of a circular cone consists of a sector shape(pizza slice) and a circle. i initially thought an elliptical cone would have a similar development with an established formula of calculating one. however, my search results came to the conclusion that there is no formulated development of an elliptical cone, let alone [a formula for the circumference of an ellipse](https://en.wikipedia.org/wiki/Perimeter_of_an_ellipse).i was stuck on finding an established solution for some time(to think it would be simple as 2πr) but eventually made an algorithm with approximation calculations. the shape is in a margin of error of ±2%. the algorithm calculates the distance between the tip of the cone to a point on the base ellipse. a circle is integrally drawn with this distance. the resulting shape looks like a ellipse with a bulge in the middle depending on the eccentricity.
