@@ -11,8 +11,8 @@ Blog with .mdx and bilingual support. Current language setup is /en and /ko. Cre
 
 ## Adding New Posts
 
-1. Create a new folder inside `/content/`.
-2. Add `index.en.mdx` and/or `index.kr.mdx` for different languages.
+1. Create a new folder inside `/src/app/[lang]/[slug]/content/`.
+2. Add `new-post.en.mdx` and/or `new-post.kr.mdx` for different languages.
 3. Include metadata in the frontmatter:
 
    ```
