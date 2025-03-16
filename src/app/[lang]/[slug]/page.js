@@ -14,6 +14,7 @@ export default async function Page({ params }) {
 
   const post = await getPostData(lang, slug);
   const components = await getMDXComponents(post.content, slug);
+  console.log(components);
   const content = await getCompiledMDXData(lang, slug, components);
 
   return (
@@ -26,6 +27,7 @@ export default async function Page({ params }) {
         </Link>
         <h1 className={styles.title}>{post.metadata.title}</h1>
         <UniversalDate date={post.metadata.date} lang={lang} />
+
         {content}
       </div>
     </article>

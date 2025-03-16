@@ -115,15 +115,7 @@ export default function ThemeToggle() {
     </svg>
   );
 
-  if (!mounted)
-    return (
-      <button
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className={styles.themeToggle}
-      >
-        {theme === "dark" ? moon : sun}
-      </button>
-    ); // Avoid hydration mismatch
+  if (!mounted) return <div className={styles.moon}></div>; // Avoid hydration mismatch
 
   return (
     <button

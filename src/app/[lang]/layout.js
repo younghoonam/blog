@@ -21,6 +21,20 @@ const pretendard = localFont({
   display: "swap",
 });
 
+export const metadata = {
+  title: "Younghoo Nam | 남영후",
+  description: "웹 디자인 프론트엔드 포트폴리오",
+  keywords: "웹 디자인, 프론트엔드, 웹 그래픽, WebGL, Three.js, 포트폴리오",
+  authors: [{ name: "Younghoo Nam", url: "https://younghoonam.com" }],
+  icons: {
+    icon: [
+      {
+        url: "/icon.svg",
+      },
+    ],
+  },
+};
+
 export async function generateStaticParams() {
   return [{ lang: "en" }, { lang: "ko" }];
 }
@@ -30,7 +44,7 @@ export default async function RootLayout({ children, params }) {
   return (
     <html lang={lang} suppressHydrationWarning>
       <body>
-        <ThemeProvider>
+        <ThemeProvider enableSystem={false}>
           <Header lang={lang} />
           {children}
         </ThemeProvider>

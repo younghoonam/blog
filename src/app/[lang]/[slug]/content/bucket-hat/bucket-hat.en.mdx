@@ -4,42 +4,100 @@ date: "2025-03-15"
 slug: "bucket-hat"
 ---
 
-## 1.introduction
+## Introduction
 
-this is a project where you can generate sewing patterns of a bucket hat with imput parameters such as size, shape, and seam allowance. it also features a 3d preview of the generated hat with physics simulation.
+This project allows users to generate sewing patterns for bucket hats based on input parameters such as size, shape, and seam allowance. It also features a 3D preview of the generated hat with physics simulation.
 
-the project aims to present an understanding of the final product of the sewing pattern before cutting and sewing. one of the main difficulties of sewing from patterns as a hobbiest is that its hard to have an idea of how the final product will look like before completion. slight changes to length and angles of the pattern can lead to significant changes to the final form.
+The goal is to provide an understanding of the final product before cutting and sewing. One of the main challenges for hobbyist sewers is visualizing the final look of a hat just from a pattern. Small changes in length and angles can significantly impact the final shape.
 
-i decided to build this because i sew quite a few bucket hats for personal use and gifting. bucket hats has a wide variety of shapes and it is difficult to how it will look by just looking at the pattern. for example the curvature of the arc of the brim pattern changes how much the brim is flared from the hat. the angle formed by the curvature is hard to visualize unless you cut it up and put it together. three dimensional garments such hats suffer a lot from this difficulty and thats why i decided to build this project
+I decided to build this project because I have sewn several bucket hats for personal use and gifting. Bucket hats come in a wide variety of shapes, and it is difficult to predict their appearance just by looking at the pattern. For example, the curvature of the brim arc affects how much the brim flares outward. The angles formed by these curvatures are difficult to visualize without physically cutting and assembling the pieces. Three-dimensional garments, such as hats, suffer greatly from this challenge, which is why I created this tool.
 
-## 2. features & functionality
+## Target Audience
 
-the project features a configuration panel with parameter inputs, a three dimensional model of the hat with cloth simulation, and a preview of the sewing pattern. users can input their measurements such as head diameter, head height, brim width, brim angle and seam allowance. the sewing pattern and 3d model is generated with the calculations with theses inputs and are changed in real time for an simulatanious interaction. the 3d model can be applied with a physics engine and simulate how that hat sits on a head with the ability to change physics parameters such as fabric stiffness, weight and gravity. than the sewing pattern can be exported to pdf with desired paper size.
+The primary target audience for this tool is beginner hobbyists who struggle to find free patterns or make their own. My goal was to create a comprehensive tool capable of generating all possible sizes and shapes for a basic bucket hat. However, as a procedural generation tool, it also enables experimental testing for intermediate and advanced sewers. With the tool's ability to calculate precise patterns and simulate different fabric weights and stiffness levels, users can experiment with various designs.
 
-### 2-1. technologies
+## Features & Functionality
 
-- reactjs - framework
-- nextjs
-- threejs - 3d view
-- react three fiber - threejs react renderer
-- cannonjs - physics engine
-- jspdf - pdf generation
-- svg2pdf - svg to pdf jspdf plugin
-- d3js - svg generation
-- firebase - feedback database
-- figma - design
-- react-tooltips - tooltips
+This project includes a configuration panel with parameter inputs, a 3D model of the hat with cloth simulation, and a preview of the sewing pattern. Users can input measurements such as head diameter, head height, brim width, brim angle, and seam allowance. The sewing pattern and 3D model are dynamically generated based on these inputs and update in real time for an interactive experience.
 
-### 3. design & ux
+The 3D model incorporates a physics engine to simulate how the hat sits on a head. Users can adjust physics parameters such as fabric stiffness, weight, and gravity. The finalized sewing pattern can be exported to a PDF in the desired paper size.
 
-i took inspiration from old school sewing books, line drawing aesthetics, analog dials and sliders from the mid-century modern electronics, notably dieter rams designs. the interactive ui elements are distinctly borders and with a drop shadow to indicate interactivity. the wordmark is EB Garamond and heading and paragraph Inter.
+### Technologies Used
 
-the layout of the desktop version is a general configuration setup - a large view and a panel on one side. one of the responsive design challenges was to make a comprehensive configuration layout for mobile. a mobile screen is too small to divide into panel and view sections. a limited area for the interactive zone for the parameters can be stifling and decrease usability. so i decieded to change the 3d viewport into a floating viewport once the page is scrolled down. although the floating viewport still covers a significant amount of interactive area, users can still sense what elementes are behind it with the uncovered areas.
+- **Next.js** – Framework
+- **Three.js** – 3D rendering
+- **React Three Fiber** – React renderer for Three.js
+- **Cannon.js** – Physics engine
+- **jsPDF** – PDF generation
+- **svg2pdf** – SVG to PDF conversion (jsPDF plugin)
+- **D3.js** – SVG generation
+- **Firebase** – Feedback database
+- **Figma** – Design
+- **react-tooltips** – Tooltips
 
-### 4. development process
+## Design & UX
 
-i started out by building core functions. taking a few input parameters(head diameter, height, brim width, angle) and using them to calculate variables needed to generate a sewing pattern. i used the svg generating functions of d3js to draw the pattern. i made shape modifying functions along the way such as offset shape and centering. jspdf was used for pdf generation. svg2pdf was needed as a jspdf plugin to insert svg into the pdf document.
+I drew inspiration from old-school sewing books, line drawing aesthetics, and mid-century modern electronics, particularly Dieter Rams’ designs. The interactive UI elements have distinct borders and drop shadows to indicate interactivity. The wordmark is set in **EB Garamond**, while headings and paragraphs use **Inter**.
 
-### 5. challenges
+The desktop layout follows a standard configuration setup—a large view with a panel on one side. One of the main challenges in responsive design was creating a user-friendly layout for mobile devices. Since mobile screens are too small to divide into panel and view sections, a compact interactive zone could hinder usability. To address this, I implemented a floating viewport for the 3D preview once the page is scrolled down. Although the floating viewport covers part of the interactive area, users can still perceive the underlying elements through the uncovered sections.
 
-one of the opening challenges was the algorithm of generating the development(unfolded planar figure) of a elliptical cone. the traditional drawing a development of a circular cone consists of a sector shape(pizza slice) and a circle. i initially thought an elliptical cone would have a similar development with an established formula of calculating one. however, my search results came to the conclusion that there is no formulated development of an elliptical cone, let alone [a formula for the circumference of an ellipse](https://en.wikipedia.org/wiki/Perimeter_of_an_ellipse).i was stuck on finding an established solution for some time(to think it would be simple as 2πr) but eventually made an algorithm with approximation calculations. the shape is in a margin of error of ±2%. the algorithm calculates the distance between the tip of the cone to a point on the base ellipse. a circle is integrally drawn with this distance. the resulting shape looks like a ellipse with a bulge in the middle depending on the eccentricity.
+## Development Process
+
+I started by developing the core functionality—taking input parameters (head diameter, height, brim width, angle) and using them to calculate the necessary values for generating a sewing pattern. I used D3.js to draw the pattern and implemented shape-modifying functions, such as offsetting and centering shapes. For PDF generation, I used jsPDF, along with the svg2pdf plugin for SVG integration.
+
+Next, I developed the 3D previews and physics simulations, which make this project unique. The drawing and exporting of the pattern were my initial focus before incorporating the physics engine.
+
+## Calculating the Hat Dimensions
+
+A bucket hat consists of two truncated cones: the head (band) and the brim. The headpiece also has a top cap (crown). To allow for more control over the hat’s shape, I included head ratio parameters to adjust the eccentricity of the head when viewed from above.
+
+Various calculations generate the 3D model and sewing pattern based on input parameters:
+
+### Input Parameters and Calculated Variables
+
+- **Head Circumference**
+- **Head Height**
+- **Head Ratio**
+- **Brim Width**
+- **Brim Angle**
+- **Head Cone Major Axis (A), Minor Axis (B)**
+- **Head Cone Height**
+- **Head Cone Development Sector Angle**
+- **Brim Cone Major Axis (A), Minor Axis (B)**
+- **Brim Cone Height**
+- **Brim Cone Development Sector Angle**
+- **Brim Base Offset**
+- **Crown Major Axis (A), Minor Axis (B)**
+
+To determine the major (A) and minor (B) axes of an ellipse based on a given circumference and A/B ratio, I first needed the formula for calculating an ellipse's circumference. However, there is no exact formula—only approximations. One of the most accurate approximations was derived by mathematician **Srinivasa Ramanujan**, with an error margin of just 0.000005%.
+
+Due to the complexity of this equation, I couldn't easily invert it to solve for the axes, so I opted for an iterative approach, comparing it with Ramanujan’s equation within an acceptable tolerance.
+
+Another mathematical challenge arose in determining the sector angle (pizza slice) for pattern development. For a circular cone, the sector angle follows the formula:
+
+Since I lacked a mathematical breakthrough of my own, I averaged the sector angles calculated using the major and minor axes. While this approach produces errors at higher eccentricities, the deviation remains within **5–10mm**, which is negligible given the flexibility of fabric and sewing tolerances.
+
+## Drawing the Development
+
+Drawing radial shapes involves plotting points from a fixed center and using angles to determine their positions.
+
+For an elliptical cone, the slant length varies at different angles. I calculated the slant at small increments of **2π/segments** (where `segments` defines the detail level of the arc). Instead of using a fixed radius, I used the calculated slant as the distance from the center.
+
+For the two truncated elliptical cones (head and brim), I applied the arc function twice. With these functions in place, I was ready to generate the sewing patterns and the crown ellipse.
+
+## Exporting the Pattern
+
+jsPDF was an excellent tool for generating dynamic PDFs, supporting text, images, and SVGs via plugins. However, one feature I wished for was the ability to add elements to an existing PDF file, which would have made template creation easier. Unfortunately, due to the complexity of the PDF format, there is no universal way to modify its content dynamically.
+
+## Creating the Mesh
+
+## 3D Simulation
+
+The physics simulation enhances users' understanding of the hat’s characteristics. While the simulation may not be entirely accurate, it provides a better sense of how the generated hat will behave when worn.
+
+The simulation consists of two worlds:
+
+1. **Graphics World** – Powered by Three.js, responsible for generating and rendering the 3D model with lighting.
+2. **Physics World** – A separate simulation that mirrors the 3D model and applies physics calculations.
+
+By integrating these two systems, the tool provides a dynamic and interactive experience for designing and visualizing bucket hats.

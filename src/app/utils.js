@@ -89,8 +89,6 @@ export async function getMDXComponents(mdxContent, mdxFilePath) {
     try {
       // Convert file path to a valid dynamic import path
       const modulePath = relativePath.replace(/^\.\/|^\//, ""); // Remove leading "./" or "/"
-      console.log(modulePath);
-
       components[name] = dynamic(
         async () => await import(`@/app/[lang]/[slug]/content/${mdxFilePath}/${modulePath}`)
       );

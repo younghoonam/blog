@@ -9,7 +9,6 @@ export default async function Home({ params }) {
   const { lang } = await params;
 
   const postData = await getPostData(lang);
-  console.log(postData);
 
   return (
     <>

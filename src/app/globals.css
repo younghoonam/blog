@@ -3,9 +3,11 @@
 :root {
   --background: white;
   --background-secondary: #eee;
+  --background-tetiray: #b7b7b7;
   --color-primary: black;
   --color-secondary: #333;
-  --color-teritary: #666;
+  --color-tertiary: #666;
+  --border-radius: 0.3em;
 
   /* Code Block */
   /* Main colors */
@@ -42,9 +44,10 @@
 [data-theme="dark"] {
   --background: #0d0d0d;
   --background-secondary: #2e2e2e;
+  --background-tetiray: #515151;
   --color-primary: white;
   --color-secondary: #ddd;
-  --color-teritary: #999;
+  --color-tertiary: #999;
   transition: color 1s;
 
   /* Code Block */
