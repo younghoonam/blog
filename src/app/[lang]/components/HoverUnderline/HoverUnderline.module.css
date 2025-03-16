@@ -1,0 +1,22 @@
+.wrapper {
+  position: relative;
+  height: fit-content;
+}
+
+.underline {
+  position: absolute;
+
+  left: 0;
+  bottom: -0.35rem;
+  margin: 0 auto;
+
+  height: 5px;
+  background-color: var(--color-primary);
+  width: 0%;
+
+  transition: width 0.6s ease;
+}
+
+.wrapper:hover .underline {
+  width: 100%;
+}

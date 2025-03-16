@@ -1,0 +1,28 @@
+.link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-primary);
+  width: fit-content;
+  margin: 3rem 0;
+}
+
+.date {
+  font-size: 0.8rem;
+  margin-right: 0.8rem;
+  color: var(--color-secondary);
+}
+
+.titleWrapper {
+  position: relative;
+}
+
+.title {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.indexWrapper {
+  max-width: 45rem;
+  margin-inline: auto;
+}

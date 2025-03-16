@@ -1,0 +1,35 @@
+---
+title: "D3.js를 이용해 타원뿔의 전개도 그리기"
+date: "2025-03-13"
+slug: "elliptical-cone-development-drawing"
+---
+
+import { TestComponent } from "./TestComponent";
+import { AnotherComponent } from "./AnotherComponent";
+import { useTheme } from "next-themes";
+
+## 1단계: 재료 준비하기
+
+시작하려면 천, 실, 그리고 재봉틀이 필요합니다.
+
+<TestComponent />
+
+```js
+export function extractMDXImports(mdxContent) {
+  const importRegex = /^import\s+\{([^}]+)\}\s+from\s+["'](.+?)["'];?/gm;
+  const imports = {};
+
+  let match;
+  while ((match = importRegex.exec(mdxContent)) !== null) {
+    const components = match[1].split(",").map((c) => c.trim());
+    const importPath = match[2];
+
+    components.forEach((component) => {
+      imports[component] = importPath;
+    });
+  }
+```
+
+<AnotherComponent />
+
+안녕하세요

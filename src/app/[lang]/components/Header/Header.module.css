@@ -1,0 +1,57 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 8rem;
+}
+
+.logo {
+  font-family: "Poppins", sans-serif;
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+
+.langButton {
+  border: none;
+  background: none;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.portfolioLink {
+  position: absolute;
+  top: 5rem;
+  display: block;
+  width: fit-content;
+  background: var(--background-secondary);
+  color: var(--color-secondary);
+  padding: 0.2rem 0.8rem 0.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 6rem;
+  font-size: 0.8rem;
+}
+
+.toggleWrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.themeToggle {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.sun,
+.moon {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: var(--color-primary);
+}
