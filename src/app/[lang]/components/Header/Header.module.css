@@ -9,7 +9,7 @@
 .logo {
   font-family: "Poppins", sans-serif;
   font-size: 2rem;
-  color: var(--color-primary);
+  color: var(--color-1);
 }
 
 .langButton {
@@ -28,7 +28,7 @@
   display: block;
   width: fit-content;
   background: var(--background-secondary);
-  color: var(--color-secondary);
+  color: var(--color-2);
   padding: 0.2rem 0.8rem 0.3rem;
   display: flex;
   justify-content: center;
@@ -53,5 +53,5 @@
 .moon {
   width: 1.4rem;
   height: 1.4rem;
-  fill: var(--color-primary);
+  fill: var(--color-1);
 }

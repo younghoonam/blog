@@ -1,13 +1,16 @@
 @import url("@/app/styles/codeBlockStyle");
+@import "katex/dist/katex.min.css";
 
 :root {
   --background: white;
   --background-secondary: #eee;
   --background-tetiray: #b7b7b7;
-  --color-primary: black;
-  --color-secondary: #333;
-  --color-tertiary: #666;
+  --color-1: black;
+  --color-2: #333;
+  --color-3: #666;
+  --color-4: #999;
   --border-radius: 0.3em;
+  --invert: invert(0%);
 
   /* Code Block */
   /* Main colors */
@@ -34,6 +37,7 @@
   --inserted-border: #202746;
   --line-number-border: #cccccd;
   --line-number-color: #979db4;
+
   --line-highlight-bg: rgba(107, 115, 148, 0.2);
   --inserted-line-bg: rgba(16, 185, 129, 0.2);
   --deleted-line-bg: rgba(239, 68, 68, 0.2);
@@ -45,10 +49,11 @@
   --background: #0d0d0d;
   --background-secondary: #2e2e2e;
   --background-tetiray: #515151;
-  --color-primary: white;
-  --color-secondary: #ddd;
-  --color-tertiary: #999;
+  --color-1: white;
+  --color-2: #ddd;
+  --color-3: #999;
   transition: color 1s;
+  --invert: invert(100%);
 
   /* Code Block */
   /* Main colors */
@@ -108,12 +113,15 @@ a {
   text-decoration: none;
 }
 
-h1 {
-  color: var(--color-primary);
+h1,
+h2,
+h3 {
+  color: var(--color-1);
 }
 
-p {
-  color: var(--color-secondary);
+p,
+li {
+  color: var(--color-2);
 }
 
 .sp-wrapper {

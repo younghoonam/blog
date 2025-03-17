@@ -2,12 +2,12 @@
 
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
-import styles from "./ConeDevelopment.module.css";
+import styles from "./bucketHat.module.css";
 
 export default function ConeDevelopment() {
   const [coneDim, setConeDim] = useState(() => {
-    const a = 100;
-    const b = 50;
+    const a = 40;
+    const b = 60;
     const height = 100;
     return {
       a,
@@ -16,13 +16,20 @@ export default function ConeDevelopment() {
       devAngle: devAngle(a, b, height),
     };
   });
+  const [svgWidth, setSvgWidth] = useState();
   const svgRef = useRef(null);
 
   useEffect(() => {
     if (!svgRef.current) return;
     d3.selectAll("#svg > *").remove();
 
-    const svg = d3.select(svgRef.current).attr("width", "100%").attr("height", "300px");
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", "100%")
+      .attr("height", "250px")
+      .attr("viewBox", `0 0 ${svgRef.current.clientWidth} ${svgRef.current.clientHeight}`) // Dynamic scaling
+      .attr("preserveAspectRatio", "xMidYMid meet"); // Maintain aspect ratio
+    setSvgWidth(svgRef.current.clientWidth);
 
     const lineGenerator = d3
       .line()
@@ -30,14 +37,17 @@ export default function ConeDevelopment() {
       .y((d) => d.y);
 
     const ellipse = translate(
-      ellipseShape(coneDim.a, coneDim.b),
-      svgRef.current.clientWidth / 4,
-      svgRef.current.clientHeight / 2
+      leftAlignShape(ellipseShape(coneDim.a, coneDim.b), svgRef.current.clientWidth * 0.6),
+      0,
+      svgRef.current.clientHeight / 2.5
     ); // Adjusted for better visibility
     const development = translate(
-      ellipticalConeDevelopmentArc(coneDim.a, coneDim.b, coneDim.height, coneDim.devAngle),
-      svgRef.current.clientWidth * (3 / 4),
-      svgRef.current.clientHeight / 2
+      rightAlignShape(
+        ellipticalConeDevelopmentArc(coneDim.a, coneDim.b, coneDim.height, coneDim.devAngle),
+        svgRef.current.clientWidth * 0.6
+      ),
+      0,
+      svgRef.current.clientHeight / 2.5
     );
 
     svg
@@ -45,7 +55,7 @@ export default function ConeDevelopment() {
       .datum(ellipse)
       .attr("d", lineGenerator)
       .style("fill", "white")
-      .style("stroke", "gray")
+      .style("stroke", "#333333")
       .style("stroke-width", 1.5);
 
     svg
@@ -53,9 +63,9 @@ export default function ConeDevelopment() {
       .datum(development)
       .attr("d", lineGenerator)
       .style("fill", "white")
-      .style("stroke", "gray")
+      .style("stroke", "#333333")
       .style("stroke-width", 1.5);
-  }, [coneDim]);
+  }, [coneDim, svgWidth]);
 
   function handleChange(e) {
     setConeDim((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -66,14 +76,13 @@ export default function ConeDevelopment() {
   }
   return (
     <>
-      <h1>Cone Development</h1>
       <div className={styles.wrapper}>
         <svg ref={svgRef} id="svg"></svg>
         <div className={styles.inputWrapper}>
           <label htmlFor="a">Major Axis</label>
-          <input type="range" id="a" name="a" min="30" max="100" onChange={handleChange} />
+          <input type="range" id="a" name="a" min="30" max="50" onChange={handleChange} />
           <label htmlFor="b">Minor Axis</label>
-          <input type="range" id="b" name="b" min="30" max="100" onChange={handleChange} />
+          <input type="range" id="b" name="b" min="30" max="50" onChange={handleChange} />
           <label htmlFor="height">Height</label>
           <input
             type="range"
@@ -164,4 +173,33 @@ export function translate(points, dx, dy) {
     x: point.x + dx,
     y: point.y + dy,
   }));
+}
+
+function rightAlignShape(coords, xOffset) {
+  if (!Array.isArray(coords) || coords.length === 0) {
+    throw new Error("Invalid input: coords should be a non-empty array of {x, y} objects");
+  }
+
+  // Find the maximum x value
+  const maxX = Math.max(...coords.map(({ x }) => x));
+
+  // Calculate shift amount
+  const shift = xOffset - maxX;
+
+  // Apply shift to all x coordinates
+  return coords.map(({ x, y }) => ({ x: x + shift, y }));
+}
+function leftAlignShape(coords, xOffset) {
+  if (!Array.isArray(coords) || coords.length === 0) {
+    throw new Error("Invalid input: coords should be a non-empty array of {x, y} objects");
+  }
+
+  // Find the minimum x value
+  const minX = Math.min(...coords.map(({ x }) => x));
+
+  // Calculate shift amount
+  const shift = xOffset - minX;
+
+  // Apply shift to all x coordinates
+  return coords.map(({ x, y }) => ({ x: x + shift, y }));
 }

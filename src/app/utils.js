@@ -3,6 +3,11 @@ import path from "path";
 import dynamic from "next/dynamic";
 import rehypePrism from "rehype-prism-plus";
 import { compileMDX } from "next-mdx-remote/rsc";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import rehypeMathjax from "rehype-mathjax";
+import { visit } from "unist-util-visit";
+import rehypeClassNames from "rehype-class-names";
 
 function parseFrontmatter(fileContent) {
   let frontmatterRegex = /---\s*([\s\S]*?)\s*---/;
@@ -110,10 +115,23 @@ export async function getCompiledMDXData(lang, slug, components) {
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-        rehypePlugins: [[rehypePrism, { showLineNumbers: true }]], // Enable syntax highlighting
+        rehypePlugins: [
+          rehypeKatex,
+          [rehypeClassNames, { code: "inlineCode" }],
+          [rehypePrism, { showLineNumbers: true }],
+        ],
+        remarkPlugins: [remarkEscapeMath, remarkMath],
       },
     },
     components: components,
   });
   return content;
+}
+function remarkEscapeMath() {
+  return (tree) => {
+    visit(tree, "math", (node) => {
+      // Replace potential JSX-interpreted patterns in math content
+      node.value = node.value.replace(/\{/g, "\\{").replace(/\}/g, "\\}");
+    });
+  };
 }

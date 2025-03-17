@@ -2,7 +2,7 @@
   position: absolute;
   top: 9.5rem;
 
-  color: var(--color-tertiary);
+  color: var(--color-3);
 }
 
 .title {
@@ -10,30 +10,61 @@
   /* margin: 0 0 0.8rem; */
 }
 .date {
-  font-size: 0.8rem;
-  /* position: relative; */
-  display: block;
+  /* font-size: 0.8rem; */
+  /* display: block; */
   margin-bottom: 5rem;
 }
 
-.MDXWrapper {
+.MDXContentWrapper {
   max-width: 45rem;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
+  margin-top: 3rem;
   /* align-items: center; */
 }
 
-.MDXWrapper > p {
-  line-height: 180%;
+.MDXContentWrapper > p {
+  line-height: 170%;
 }
 
-.MDXWrapper li {
-  line-height: 150%;
+.MDXContentWrapper a {
+  font-weight: 600;
+  color: var(--color-4);
+  transition: 0.3s;
 }
 
-.MDXWrapper img {
+.MDXContentWrapper a:hover {
+  color: var(--color-1);
+}
+
+.MDXContentWrapper > video {
   width: 100%;
   height: auto;
   border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+  margin-block: 1rem;
+}
+
+.MDXContentWrapper li {
+  line-height: 180%;
+}
+
+.MDXContentWrapper h2 {
+  margin: 2rem 0 0rem 0;
+}
+
+.MDXContentWrapper img {
+  background: var(--bg-color);
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+}
+
+.MDXContentWrapper :not(pre) code {
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+  padding: 4px 8px;
 }

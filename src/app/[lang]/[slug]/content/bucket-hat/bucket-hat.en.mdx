@@ -4,23 +4,28 @@ date: "2025-03-15"
 slug: "bucket-hat"
 ---
 
-## Introduction
+import { ConeDevelopment } from "./ConeDevelopment";
+import { Katex } from "./Katex";
+import { Slider } from "./Slider";
+import { Lathe } from "./Lathe";
 
-This project allows users to generate sewing patterns for bucket hats based on input parameters such as size, shape, and seam allowance. It also features a 3D preview of the generated hat with physics simulation.
+This is a project where you can generate sewing patterns for bucket hats with input parameters such as size, shape, and seam allowance. It also features a 3D preview of the generated hat with a physics simulation.
 
-The goal is to provide an understanding of the final product before cutting and sewing. One of the main challenges for hobbyist sewers is visualizing the final look of a hat just from a pattern. Small changes in length and angles can significantly impact the final shape.
+The project aims to present a better understanding of the final product before cutting and sewing. One of the main difficulties of sewing from patterns -especially as a hobbyist- is that it’s hard to have an idea of how the final product will look before completion. The illustration or image provided by the sewing pattern is all that we have. Slight changes to length and angles of the pattern can lead to significant changes to the final form.
 
-I decided to build this project because I have sewn several bucket hats for personal use and gifting. Bucket hats come in a wide variety of shapes, and it is difficult to predict their appearance just by looking at the pattern. For example, the curvature of the brim arc affects how much the brim flares outward. The angles formed by these curvatures are difficult to visualize without physically cutting and assembling the pieces. Three-dimensional garments, such as hats, suffer greatly from this challenge, which is why I created this tool.
+I decided to build this because I sew quite a few bucket hats for personal use and gifting. Bucket hats have a wide variety of shapes, and it is difficult to know how it will look by just looking at the pattern. For example, the curvature of the arc of the brim pattern changes how much the brim is flared from the hat. The angle formed by the curvature is hard to visualize unless you cut it up and put it together. Three-dimensional garments, such as hats, suffer a lot from this difficulty, which is why I wanted to create a tool that makes the process easier.
+
+<video width="500" height="300" autoPlay muted loop>
+  <source src="/bucket-hat/videos/bucket-hat-video1.mp4" type="video/mp4" />
+</video>
 
 ## Target Audience
 
-The primary target audience for this tool is beginner hobbyists who struggle to find free patterns or make their own. My goal was to create a comprehensive tool capable of generating all possible sizes and shapes for a basic bucket hat. However, as a procedural generation tool, it also enables experimental testing for intermediate and advanced sewers. With the tool's ability to calculate precise patterns and simulate different fabric weights and stiffness levels, users can experiment with various designs.
+The main target audience for this tool was intended for beginner hobbyists who have a hard time finding free patterns or making their own. I intended to make a one comprehensive tool for generating all possible sizes and shapes for a basic bucket hat. Furthermore, as a tool of procedural generation, it also opens up possibilities of experimental testing for intermediate and advanced sewers. With the tool's ability to calculate exact patterns of desired shapes and simulate different fabric weight and stiffness, users can experiment digitally without using any fabric.
 
 ## Features & Functionality
 
-This project includes a configuration panel with parameter inputs, a 3D model of the hat with cloth simulation, and a preview of the sewing pattern. Users can input measurements such as head diameter, head height, brim width, brim angle, and seam allowance. The sewing pattern and 3D model are dynamically generated based on these inputs and update in real time for an interactive experience.
-
-The 3D model incorporates a physics engine to simulate how the hat sits on a head. Users can adjust physics parameters such as fabric stiffness, weight, and gravity. The finalized sewing pattern can be exported to a PDF in the desired paper size.
+The project features a configuration panel with parameter inputs, a three-dimensional model of the hat with cloth simulation, and a preview of the sewing pattern. Users can input their measurements such as head diameter, head height, brim width, brim angle, and seam allowance. The sewing pattern and 3d model are generated with the calculations with these inputs and are updated in real time for a simultaneous interaction. The 3d model can be applied to a physics engine and simulate how the hat sits on a head with the ability to change physics parameters such as fabric stiffness, weight, and gravity. Finally, the sewing pattern can be exported to PDF with desired paper size.
 
 ### Technologies Used
 
@@ -37,67 +42,297 @@ The 3D model incorporates a physics engine to simulate how the hat sits on a hea
 
 ## Design & UX
 
-I drew inspiration from old-school sewing books, line drawing aesthetics, and mid-century modern electronics, particularly Dieter Rams’ designs. The interactive UI elements have distinct borders and drop shadows to indicate interactivity. The wordmark is set in **EB Garamond**, while headings and paragraphs use **Inter**.
+I took inspiration from old school sewing books, line drawing aesthetics, analog dials and sliders from the mid-century modern electronics, notably Dieter Rams’ designs. The interactive UI elements are distinctly bordered and have a drop shadow to indicate interactivity. the wordmark is **EB Garamond** and heading and paragraphs are in **Inter**.
+
+![Braun TS 45 Controller](https://assets.fontsinuse.com/use-media/20678/upto-700xauto/56703525/1/jpeg/121217RA_braun_hi_fi_amp_006.jpeg)
+
+<div className="sliderWrapper">
+  <Slider
+    min={500}
+    max={650}
+    defaultValue={550}
+    label={"Lautstarke"}
+    marks={[
+      { value: 500, label: "500" },
+      { value: 525, label: "525" },
+      { value: 550, label: "550" },
+      { value: 575, label: "575" },
+      { value: 600, label: "600" },
+      { value: 625, label: "625" },
+      { value: 650, label: "650" },
+    ]}
+    ticks={61}
+  />
+</div>
 
 The desktop layout follows a standard configuration setup—a large view with a panel on one side. One of the main challenges in responsive design was creating a user-friendly layout for mobile devices. Since mobile screens are too small to divide into panel and view sections, a compact interactive zone could hinder usability. To address this, I implemented a floating viewport for the 3D preview once the page is scrolled down. Although the floating viewport covers part of the interactive area, users can still perceive the underlying elements through the uncovered sections.
 
-## Development Process
+![Mobile UI](/bucket-hat/images/bucket-hat-mobile.jpg)
 
-I started by developing the core functionality—taking input parameters (head diameter, height, brim width, angle) and using them to calculate the necessary values for generating a sewing pattern. I used D3.js to draw the pattern and implemented shape-modifying functions, such as offsetting and centering shapes. For PDF generation, I used jsPDF, along with the svg2pdf plugin for SVG integration.
+## Development Process Overview
 
-Next, I developed the 3D previews and physics simulations, which make this project unique. The drawing and exporting of the pattern were my initial focus before incorporating the physics engine.
+I started by building the core functions—taking a few input parameters (head diameter, height, brim width, angle) and using them to calculate the variables needed to generate a sewing pattern. I used D3.js's SVG-generating functions to draw the pattern and added shape-modifying functions along the way, like offsetting shapes and centering them. For PDF generation, I used jsPDF, along with the svg2pdf plugin to insert the SVG into the document.
+
+After that, I moved on to developing the 3D previews and physics engine, which is what makes this project special. But first, about drawing and exporting the pattern.
 
 ## Calculating the Hat Dimensions
 
-A bucket hat consists of two truncated cones: the head (band) and the brim. The headpiece also has a top cap (crown). To allow for more control over the hat’s shape, I included head ratio parameters to adjust the eccentricity of the head when viewed from above.
+A bucket hat consists of two truncated cones. One being the head(band) and the other the brim. The head piece has a top cap which is the crown. For a more detailed and control over the shape of the hat, I also added head ratio parameters to adjust the eccentricity of the ellipse of the head viewed from the top.
 
-Various calculations generate the 3D model and sewing pattern based on input parameters:
+Various variables needed to generate the 3d model and sewing pattern were calculated with the parameter inputs.
 
 ### Input Parameters and Calculated Variables
 
-- **Head Circumference**
-- **Head Height**
-- **Head Ratio**
-- **Brim Width**
-- **Brim Angle**
-- **Head Cone Major Axis (A), Minor Axis (B)**
-- **Head Cone Height**
-- **Head Cone Development Sector Angle**
-- **Brim Cone Major Axis (A), Minor Axis (B)**
-- **Brim Cone Height**
-- **Brim Cone Development Sector Angle**
-- **Brim Base Offset**
-- **Crown Major Axis (A), Minor Axis (B)**
+- Head Circumference
+- Head Height
+- Head Ratio
+- Brim Width
+- Brim Angle
+- Head Cone Radius A, B
+- Head Cone Height
+- Head cone development sector angle
+- Brim Cone Radius A, B
+- Brim cone height
+- brim cone development sector angle
+- Brim Base Offset
+- Crown Radius A, B
 
-To determine the major (A) and minor (B) axes of an ellipse based on a given circumference and A/B ratio, I first needed the formula for calculating an ellipse's circumference. However, there is no exact formula—only approximations. One of the most accurate approximations was derived by mathematician **Srinivasa Ramanujan**, with an error margin of just 0.000005%.
+To calculate the major(a) and minor(b) axes of an ellipse given with the circumference and a, b ratio, I needed the formula for calculating the circumference of an ellipse first. I initially thought it would be simple and be some altered form of 2πr, but upon searching for it online, it turns out there was no exact formula for it. I came across an entire [Wiki Page](https://en.wikipedia.org/wiki/Perimeter_of_an_ellipse) and a fun [YouTube video](https://www.youtube.com/watch?v=5nW3nJhBHL0) about it, how an ellipse doesn’t have one. One of the most accurate approximations was done by a genius mathematician, [Srinivasa Ramanujan](https://en.wikipedia.org/wiki/Srinivasa_Ramanujan). And the formula looks like this.
 
-Due to the complexity of this equation, I couldn't easily invert it to solve for the axes, so I opted for an iterative approach, comparing it with Ramanujan’s equation within an acceptable tolerance.
+<Katex
+  equation={
+    "P \\approx \\pi \\left( a + b \\right) \\left( 1 + \\frac{3h}{10 + \\sqrt{4 - 3h}} \\right)"
+  }
+/>
+<Katex equation={"h = \\frac{(a - b)^2}{(a + b)^2}"} />
 
-Another mathematical challenge arose in determining the sector angle (pizza slice) for pattern development. For a circular cone, the sector angle follows the formula:
+```js
+//  Ramanujan's second approximation
+function ellipseCircumference(a, b) {
+  const h = Math.pow(a - b, 2) / Math.pow(a + b, 2);
+  const p = Math.PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
+  return p;
+}
+```
 
-Since I lacked a mathematical breakthrough of my own, I averaged the sector angles calculated using the major and minor axes. While this approach produces errors at higher eccentricities, the deviation remains within **5–10mm**, which is negligible given the flexibility of fabric and sewing tolerances.
+This approximation has an error of 0.000005%. Now that’s some black magic. However, because of the complexity of the equation, I couldn't easily invert the equation to get the axes. So, I chose to go with a simple iterative approach and compare it with Ramanujan’s approximation with a target tolerance.
+
+```js
+function findEllipseAxesForRatio(target, ratio, initialA = 75, tolerance = 1e-4) {
+  // Initialize axis 'a' with the smallest(baby) of head radiuses
+  let a = initialA;
+  let b = a * ratio;
+  let targetPerimeter = target;
+  let difference;
+
+  do {
+    // Update 'b' to maintain the given aspect ratio
+    b = a * ratio;
+
+    // Get an ellipse perimeter using with Ramanujan's formula
+    let perimeter = ellipseCircumference(a, b);
+
+    // Get the difference between the computed and target perimeter
+    difference = Math.abs(perimeter - targetPerimeter);
+
+    // Adjust 'a' based on the difference to converge towards the target perimeter
+    a += (targetPerimeter - perimeter) * 0.1;
+  } while (difference > tolerance); // Continue until the error is within the specified tolerance
+
+  // Return the computed major and minor axes
+  return { a, b };
+}
+```
+
+However, I came to another mathematical problem. To draw the development of an elliptical cone, I needed the angle of the development sector(pizza slice shape). With a circular cone, the sector angle would be `Φ=2πr/l`, but with an elliptical cone, the slant l would change at every angle of the sector. With no mathematical genius of my own, I just averaged the two angles calculated with the major and minor axes. The result is terrible at higher eccentricities but has an error between 5 ~ and 10mm in my application of bucket hats. I decided that the redundancy of fabrics and sewing wouldn't make it much of a problem.
+
+<img src="/bucket-hat/images/cone-development.png" />
 
 ## Drawing the Development
 
-Drawing radial shapes involves plotting points from a fixed center and using angles to determine their positions.
+Drawing radial shapes is done by plotting points from a fixed center, using angles to determine their positions.
 
-For an elliptical cone, the slant length varies at different angles. I calculated the slant at small increments of **2π/segments** (where `segments` defines the detail level of the arc). Instead of using a fixed radius, I used the calculated slant as the distance from the center.
+```js
+function ellipse(a, b, segments = 128) {
+  // [{x,y},{x,y}...]
+  const coordinates = [];
 
-For the two truncated elliptical cones (head and brim), I applied the arc function twice. With these functions in place, I was ready to generate the sewing patterns and the crown ellipse.
+  for (let index = 0; index < segments; index++) {
+    const angle = (index / segments) * Math.PI * 2;
+    coordinates.push({
+      x: a * Math.cos(angle),
+      y: b * Math.sin(angle),
+    });
+  }
 
-## Exporting the Pattern
+  // push the first coordinate so that there is a line segement at the end
+  coordinates.push(coordinates[0]);
 
-jsPDF was an excellent tool for generating dynamic PDFs, supporting text, images, and SVGs via plugins. However, one feature I wished for was the ability to add elements to an existing PDF file, which would have made template creation easier. Unfortunately, due to the complexity of the PDF format, there is no universal way to modify its content dynamically.
+  return coordinates;
+}
+```
 
-## Creating the Mesh
+For an elliptical cone, the slant changes for every angle. So I calculated the slant in steps of `2π/segments` (segments would be how detailed the arc would be). Then, I draw a radial figure like the algorithm above except, instead of a radius, I use the calculated slant to be used as the distance from the center.
 
-## 3D Simulation
+```js
+function ellipticalConeDevelopmentArc(
+  a, // Major Axis A
+  b, // Minor Axix B
+  height, // Total Height of The Cone
+  developmentAngle, // Sector angle
+  segments = 128 // number of line segments
+) {
+  // [{x,y},{x,y}...]
+  const coordinates = [];
 
-The physics simulation enhances users' understanding of the hat’s characteristics. While the simulation may not be entirely accurate, it provides a better sense of how the generated hat will behave when worn.
+  for (let index = 0; index < segments; index++) {
+    // increase step by 2π/segments * total sector angle
+    const ellipseAngleSegment = (index / segments) * 2 * Math.PI;
+    const developmentAngleSegment = (index / segments) * developmentAngle;
+    // calculate slant
+    const slant = Math.hypot(
+      height,
+      Math.hypot(a * Math.cos(ellipseAngleSegment), b * Math.sin(ellipseAngleSegment))
+    );
+    // A coodinate with a slant distance from center and step angle
+    coordinates.push({
+      slant: slant,
+      x: slant * Math.cos(developmentAngleSegment),
+      y: slant * Math.sin(developmentAngleSegment),
+    });
+  }
 
-The simulation consists of two worlds:
+  return coordinates;
+}
+```
 
-1. **Graphics World** – Powered by Three.js, responsible for generating and rendering the 3D model with lighting.
-2. **Physics World** – A separate simulation that mirrors the 3D model and applies physics calculations.
+### Elliptical Cone Development
 
-By integrating these two systems, the tool provides a dynamic and interactive experience for designing and visualizing bucket hats.
+<ConeDevelopment />
+
+## Exporting The Pattern as PDF
+
+jsPDF was a useful tool to generate dynamic PDF files. It supports texts, images, and SVGs with a plugin. One feature I wish it had was the ability to add elements to an existing PDF file. It would have been easier to make a template without having to add template elements one by one by code. It seemed like a difficult feature to implement because PDF being a _very_ old format with high complexity, there is no universal way to modify its content dynamically.
+
+![Example PDF Print](/bucket-hat/images/bucket-hat-print.jpg)
+
+## Making The Mesh
+
+Generating the 3D model was done by using the `LatheGeometry` of THREE.js. It takes a profile of the hat and revolves it around an axis and I scaled it in one direction so it matches the head ratio and becomes an elliptical shape.
+
+<Lathe />
+
+## Physics Simulation
+
+The physics simulations enhance the user's inherent comprehension of the hat's physical characteristics. Even though the simulation can be inaccurate, it provides a better understanding of how the hat will behave on top of a head.
+
+The simulation consists of two worlds: a physics world and a graphics world. The graphics world, powered by Three.js, handles rendering—generating the 3D model, setting up lights, cameras, shaders, and everything visual. The physics world is separate; it takes a copy of the 3D model’s data and runs its own simulation with gravity, mass, and other physical rules.
+
+In this simulation, the cloth is made of interconnected points (particles) copied from the 3D mesh’s vertices positions and are linked by constraints. These constraints control how much the fabric can stretch or bend, making the material feel realistic.
+
+There are many types of constraints provided by the physics engine Cannon-es. These are the constraints related to simulating a cloth
+
+1. **Distance constraint** - A constraint to keep two points at a fixed distance from each other. They ensure the cloth stays proportionally correct while allowing the material to bend and drape.
+2. **Lock constraint** - A constraint that removes all degrees of freedom. While a distance constraint keeps the proportions of the cloth, a lock constraint keeps the form of the cloth by adding forces to retain its original shape.
+3. **Spring** - A spring has both of the properties of distance and lock constraints by allowing it to move freely and also applying forces to keep its original shape. It is more realistic as it can simulate the elasticity of fabrics but is more computationally demanding because it requires more calculations.
+
+I used the first two constraints in this project.
+
+```js
+// Making a plane geometry and cannon.js particles with the vertex data
+
+// A plane geometry of 10 by 10 segments
+const geometry = new THREE.PlaneGeometry(1, 1, 10, 10);
+const vertexPositions = geometry.getAttribute("position");
+
+const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.81, 0) });
+const particles = [];
+
+for (let i = 0; i < vertexPositions.count; i++) {
+  const x = vertexPositions.getX(i);
+  const y = vertexPositions.getY(i);
+  const z = vertexPositions.getZ(i);
+
+  const particleBody = new CANNON.Body({
+    mass: params.fabricWeight,
+    shape: new CANNON.Particle(),
+    position: new CANNON.Vec3(x, y, z),
+  });
+
+  particles.push(particleBody);
+  world.addBody(particleBody);
+}
+```
+
+This creates individual physics particles based on the mesh’s vertex positions. However, I needed a structured way to add constraints between adjacent particles.
+
+### Improving Readability with an Indexed Data Structure
+
+A simple approach would be to add constraints based on the segment numbers, but I wanted something more readable and a convenient way to handle exceptions. Instead of just storing particles in an array, I used an object with `x, y` indices as keys. This helped me visualize the data structure better and allowed for more flexibility when adding constraints.
+
+```js
+const xSegments = 10;
+const ySegments = 10;
+
+const geometry = new THREE.PlaneGeometry(1, 1, xSegments, ySegments);
+const vertexPositions = geometry.getAttribute("position");
+
+const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.81, 0) });
+const particles = {};
+
+for (let x = 0; x <= xSegments; x++) {
+  for (let y = 0; y <= ySegments; y++) {
+    const key = `${x} ${y}`;
+    const vertexIndex = y + x * (ySegments + 1);
+
+    const xPos = vertexPositions.getX(vertexIndex);
+    const yPos = vertexPositions.getY(vertexIndex);
+    const zPos = vertexPositions.getZ(vertexIndex);
+
+    const particleBody = new CANNON.Body({
+      mass: params.fabricWeight,
+      shape: new CANNON.Particle(),
+      position: new CANNON.Vec3(xPos, yPos, zPos),
+    });
+
+    particles[key] = particleBody;
+    world.addBody(particleBody);
+  }
+}
+```
+
+Now, I could easily reference particles using their `x y` coordinates. This made it straightforward to add constraints between adjacent particles.
+
+### Connecting Particles with Constraints
+
+To simulate the structural integrity of the fabric, I connected particles with constraints. The logic is as follows:
+
+- Connect each particle to the one above it (vertical connection).
+- Connect each particle to the one on the left (horizontal connection).
+- If the particle is at the leftmost edge, connect it to the rightmost particle to simulate a seamless wrap (useful for cylindrical shapes like a hat brim).
+
+```js
+for (let x = xSegments; x >= 0; x--) {
+  for (let y = ySegments; y >= 0; y--) {
+    // Connect to the particle above
+    if (y - 1 >= 0) {
+      connect(particles[`${x} ${y}`], particles[`${x} ${y - 1}`], y);
+    }
+
+    // Connect to the particle on the left (or wrap around if at the edge)
+    if (x - 1 >= 0) {
+      connect(particles[`${x} ${y}`], particles[`${x - 1} ${y}`], y);
+    } else {
+      connect(particles[`${x} ${y}`], particles[`${xSegments} ${y}`], y);
+    }
+  }
+}
+```
+
+This approach not only makes the constraints more readable but also allows for special cases, such as wrapping around edges or excluding specific connections.
+
+## Final Thoughts
+
+This project started because I wanted a better way to see how a bucket hat would turn out before cutting fabric. Along the way, it became a mix of pattern generation, PDF generating, 3D visualization, and physics simulation.
+
+There’s still a lot I could improve—more shape options, better physics, maybe even different hat styles. But for now, it does what I initially envisioned.

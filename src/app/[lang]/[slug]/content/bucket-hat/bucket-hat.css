@@ -1,0 +1,15 @@
+.math-wrapper {
+  display: flex;
+  justify-content: space-around;
+}
+
+.sliderWrapper {
+  padding: 2rem 2rem;
+  background: var(--bg-color);
+  border: var(--border-color) 1px solid;
+  border-radius: var(--border-radius);
+
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
