@@ -54,16 +54,16 @@ export default function ConeDevelopment() {
       .append("path")
       .datum(ellipse)
       .attr("d", lineGenerator)
-      .style("fill", "white")
-      .style("stroke", "#333333")
+      .style("fill", "var(--background")
+      .style("stroke", "var(--color-1)")
       .style("stroke-width", 1.5);
 
     svg
       .append("path")
       .datum(development)
       .attr("d", lineGenerator)
-      .style("fill", "white")
-      .style("stroke", "#333333")
+      .style("fill", "var(--background")
+      .style("stroke", "var(--color-1)")
       .style("stroke-width", 1.5);
   }, [coneDim, svgWidth]);
 

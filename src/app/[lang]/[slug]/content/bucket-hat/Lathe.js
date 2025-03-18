@@ -1,11 +1,10 @@
 "use client";
 
-import { Sandpack } from "@codesandbox/sandpack-react";
+import ThemedSandpack from "@/app/[lang]/components/ThemedSandpack";
 
 export default function Lathe() {
   return (
-    <Sandpack
-      theme="auto"
+    <ThemedSandpack
       template="vanilla"
       customSetup={{
         dependencies: {

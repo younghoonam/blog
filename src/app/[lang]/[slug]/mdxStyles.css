@@ -1,0 +1,52 @@
+.illustration {
+  background: #eee;
+  filter: var(--invert);
+}
+p {
+  line-height: 170%;
+}
+
+a {
+  font-weight: 600;
+  color: var(--color-4);
+  transition: 0.3s;
+}
+
+a:hover {
+  color: var(--color-1);
+}
+
+video {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+  margin-block: 1rem;
+}
+
+li {
+  line-height: 180%;
+}
+
+h2 {
+  margin: 2rem 0 0rem 0;
+}
+
+img {
+  background: var(--bg-color);
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+}
+
+code:not(pre code) {
+  color: var(--property-color);
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+  padding: 4px 8px 4px;
+  font-family: Consolas, Menlo, Monaco, "Andale Mono WT", "Andale Mono", "Lucida Console",
+    "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono",
+    "Nimbus Mono L", "Courier New", Courier, monospace;
+}

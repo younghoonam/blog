@@ -146,7 +146,7 @@ function findEllipseAxesForRatio(target, ratio, initialA = 75, tolerance = 1e-4)
 
 However, I came to another mathematical problem. To draw the development of an elliptical cone, I needed the angle of the development sector(pizza slice shape). With a circular cone, the sector angle would be `Φ=2πr/l`, but with an elliptical cone, the slant l would change at every angle of the sector. With no mathematical genius of my own, I just averaged the two angles calculated with the major and minor axes. The result is terrible at higher eccentricities but has an error between 5 ~ and 10mm in my application of bucket hats. I decided that the redundancy of fabrics and sewing wouldn't make it much of a problem.
 
-<img src="/bucket-hat/images/cone-development.png" />
+<img className="illustration" src="/bucket-hat/images/cone-development.png" />
 
 ## Drawing the Development
 
@@ -238,6 +238,10 @@ There are many types of constraints provided by the physics engine Cannon-es. Th
 
 I used the first two constraints in this project.
 
+### Copying The Mesh Data To The Physics World
+
+To simulate fabric physics, I first needed to transfer the mesh’s vertex positions into the physics world. This involved copying the vertex data from the Three.js mesh and creating particles in Cannon-es. Here’s a simple way to generate particles from a plane geometry in Three.js and transfer them into Cannon-es:
+
 ```js
 // Making a plane geometry and cannon.js particles with the vertex data
 
@@ -267,6 +271,8 @@ for (let i = 0; i < vertexPositions.count; i++) {
 This creates individual physics particles based on the mesh’s vertex positions. However, I needed a structured way to add constraints between adjacent particles.
 
 ### Improving Readability with an Indexed Data Structure
+
+<img className="illustration" src="/bucket-hat/images/vertex-index.png" />
 
 A simple approach would be to add constraints based on the segment numbers, but I wanted something more readable and a convenient way to handle exceptions. Instead of just storing particles in an array, I used an object with `x, y` indices as keys. This helped me visualize the data structure better and allowed for more flexibility when adding constraints.
 
@@ -307,20 +313,20 @@ Now, I could easily reference particles using their `x y` coordinates. This made
 
 To simulate the structural integrity of the fabric, I connected particles with constraints. The logic is as follows:
 
-- Connect each particle to the one above it (vertical connection).
-- Connect each particle to the one on the left (horizontal connection).
-- If the particle is at the leftmost edge, connect it to the rightmost particle to simulate a seamless wrap (useful for cylindrical shapes like a hat brim).
+- If the particle is not in the first row, connect each particle to the one above it (vertical connection).
+- If the particle is not in the first column, connect each particle to the one on the left (horizontal connection).
+- If the particle is in the first column, connect it to the particle in the last column to simulate a seamless wrap (useful for cylindrical shapes like a hat brim).
 
 ```js
 for (let x = xSegments; x >= 0; x--) {
   for (let y = ySegments; y >= 0; y--) {
     // Connect to the particle above
-    if (y - 1 >= 0) {
+    if (y >= 1) {
       connect(particles[`${x} ${y}`], particles[`${x} ${y - 1}`], y);
     }
 
     // Connect to the particle on the left (or wrap around if at the edge)
-    if (x - 1 >= 0) {
+    if (x >= 1) {
       connect(particles[`${x} ${y}`], particles[`${x - 1} ${y}`], y);
     } else {
       connect(particles[`${x} ${y}`], particles[`${xSegments} ${y}`], y);
@@ -335,4 +341,4 @@ This approach not only makes the constraints more readable but also allows for s
 
 This project started because I wanted a better way to see how a bucket hat would turn out before cutting fabric. Along the way, it became a mix of pattern generation, PDF generating, 3D visualization, and physics simulation.
 
-There’s still a lot I could improve—more shape options, better physics, maybe even different hat styles. But for now, it does what I initially envisioned.
+There’s still a lot I could improve—more shape options, better physics, maybe even different hat styles. But for now, it does what I initially envisioned.Thank you for reading.

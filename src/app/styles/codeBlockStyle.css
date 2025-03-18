@@ -130,6 +130,7 @@ pre[class*="language-"] {
 }
 
 .token.placeholder,
+.token.function,
 .token.variable {
   color: var(--variable-color);
 }

@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import HoverUnderline from "../components/HoverUnderline/HoverUnderline";
 import UniversalDate from "../components/UniversalDate";
 import dynamic from "next/dynamic";
+import "./mdxStyles.css";
 
 export async function generateStaticParams() {
   const posts = await getPostData("en");
