@@ -30,8 +30,8 @@
   height: 1.4rem;
   margin-left: 0.8rem;
   border: var(--ui-clickable-border);
-  border-width: 1px;
-  border-color: var(--color-4);
+  border-width: 2px;
+  border-color: var(--color-1);
   border-radius: var(--ui-clickable-border-radius);
   text-align: center;
   font-size: 0.8rem;

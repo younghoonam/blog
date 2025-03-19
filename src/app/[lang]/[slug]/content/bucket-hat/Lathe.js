@@ -12,7 +12,7 @@ export default function Lathe() {
         },
       }}
       files={{
-        "/styles.css": `body{margin:0}`,
+        "/styles.css": `body{margin:0;}`,
         "/index.js": `import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import "./styles.css"
@@ -32,6 +32,7 @@ const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerH
 camera.position.set(0,-30, 60);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setClearAlpha(0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -60,7 +61,7 @@ points.push(
 
 // Create lathe geometry
 const latheGeometry = new THREE.LatheGeometry(points, 30);
-const latheMaterial = new THREE.MeshStandardMaterial({ color: 0x0077ff, side: THREE.DoubleSide, flatShading: true });
+const latheMaterial = new THREE.MeshStandardMaterial({ color: 0xd36b29, side: THREE.DoubleSide, flatShading: true });
 const latheMesh = new THREE.Mesh(latheGeometry, latheMaterial);
 latheMesh.position.set(0,10,0);
 scene.add(latheMesh);

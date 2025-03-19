@@ -12,7 +12,7 @@ export default function ThemedSandpack(props) {
         colors: {
           surface1: "var(--bg-color)",
           surface2: "var(--border-color)",
-          surface3: "var(--selection-bg)",
+          surface3: "var(--border-color)",
           clickable: "var(--color-4)",
           base: "#323232",
           disabled: "#C5C5C5",
