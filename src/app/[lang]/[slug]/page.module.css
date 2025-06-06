@@ -23,3 +23,7 @@
   margin-top: 3rem;
   /* align-items: center; */
 }
+
+.MDXContentWrapper a::after {
+  content: "↗";
+}

@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 
 import { Poppins, Roboto } from "next/font/google";
 import localFont from "next/font/local";
+import Footer from "./components/Footer/Footer";
 
 const poppins = Poppins({
   weight: "900",
@@ -46,7 +47,9 @@ export default async function RootLayout({ children, params }) {
       <body>
         <ThemeProvider enableSystem={false}>
           <Header lang={lang} />
-          {children}
+          <main>{children}</main>
+
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

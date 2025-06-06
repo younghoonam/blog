@@ -1,0 +1,21 @@
+.footer {
+  margin-top: 1rem;
+  padding: 1rem 0;
+  border-top: solid 1px #333;
+  display: flex;
+  justify-content: space-between;
+}
+
+.links {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.icon {
+  width: 1.4rem;
+  border: none;
+}
+
+.footer .copywrite {
+  font-weight: 600;
+}

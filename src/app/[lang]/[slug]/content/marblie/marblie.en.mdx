@@ -1,0 +1,132 @@
+---
+title: "Marblie, a Marble Run Game"
+date: "2025-06-06"
+slug: "marblie"
+---
+
+**Marblie** is a marble run game that runs directly in your browser, built with **Three.js** and **Rapier**. You can build custom tracks, drop marbles, and watch them bounce, roll, and fly through tracks with real-time physics.
+
+This project was a way for me to explore how I might design and develop a 3D UI/UX system that supports scene editing. I’ve always had fun with creation games, and with my background using CAD tools, Marblie became a blend of those experiences—something I could call my own.
+
+It’s meant to be something anyone can enjoy. I often keep it open in a separate browser tab, playing around with it whenever I need a little distraction.
+
+It even got featured in a [Three.js X thread](https://x.com/threejs/status/1922982953887400246), which was an honor and a huge motivational boost.
+
+<figure>
+  <img src="/marblie/marblie-main.jpg" alt="Screenshot of Marblie in play" />
+  <figcaption>Screenshot of Marblie in play</figcaption>
+</figure>
+
+## Features
+
+- Customizable track building
+- Physics simulation
+- Animated interactions
+
+## Technologies
+
+- **Three.js** for rendering
+- **Rapier** for physics simulation
+
+## Development Process
+
+1. **Combining Three.js and Rapier**
+
+   Started with a simple straight track and a marble. I applied and updated positions using Rapier to sync the physics world with the graphics world.
+
+2. **Custom transformation controls**
+
+   I wanted a way to move, rotate, and scale tracks—similar to `THREE.TransformControls`. Since each track type needed different behaviors, I ended up creating my own version by referencing its source code.
+
+3. **Adding tracks via HTML interaction**
+
+   I experimented with click and touch events to get the interaction feeling right. Clicking an HTML element attaches a track to the pointer, and clicking again places it. Alternatively, dragging the element allows direct placement. This dual method works well across both desktop and mobile.
+
+4. **Adding more track types**
+
+   I implemented curve tracks, windmill tracks, and funnel tracks—each requiring different physics approaches.
+
+5. **Additional features**
+
+   I later added night mode, a marble timer, and a camera-follow system for added depth and polish.
+
+## Physical Objects
+
+### Marbles
+
+Some marbles act as light sources. A `THREE.PointLight` is placed at the center of the sphere, and the material has a positive emissive value to make it glow. It adds a bit of randomness and looks especially nice in dark mode.
+
+However, dynamically adding and removing multiple point lights caused stuttering. To work around that, I pre-added all the point lights to the scene with their brightness set to 0. When a marble is created, one of the available lights is randomly assigned to it and added to its `THREE.Group`, with brightness turned up.
+
+<figure>
+  <img
+    src="/marblie/marblie-marble.jpg"
+    alt="Screenshot of a marble glowing in the dark"
+  />
+  <figcaption>Screenshot of a marble glowing in the dark</figcaption>
+</figure>
+
+For realistic simulation, I tweaked restitution, mass, and friction settings. One issue I encountered was that, under default Rapier settings, marbles would bounce off curved surfaces instead of rolling smoothly. Lowering the simulation timestep to `1/240` (from the default `1/60`) fixed this behavior.
+
+### Tracks
+
+There are currently four major track types: straight, curved, windmill, and shape tracks.
+
+1. **Straight Tracks -** The most basic form, built with `THREE.ExtrudeGeometry` and three `RAPIER.ColliderDesc.cuboid` components to form a composite collider. These can rotate and scale in one direction.
+2. **Curve Tracks -** Editable Bezier curves using `THREE.QuadraticBezierCurve` with three control points. The geometry is also extruded using `THREE.ExtrudeGeometry`, but I had to manually add a cap using `THREE.ShapeGeometry` since bevels aren’t supported on path extrusions. The collider uses a `RAPIER.ColliderDesc.trimesh`, with merged vertices via `BufferGeometryUtils.mergeVertices`.
+3. **Windmill Tracks -** Two straight tracks joined at a right angle, connected with an impulse joint using `world.createImpulseJoint`.
+4. **Shape Tracks -** These include funnel or purely decorative elements like rings and cones. For these, I used `RAPIER.ColliderDesc.trimesh` when precision was needed, or `RAPIER.ColliderDesc.convexHull` when performance was more important. Since convex hulls ignore concave geometry, they’re simpler and faster.
+
+All tracks are grouped using `THREE.Group` for easier transformation. For example, the windmill track contains two `THREE.Mesh` instances grouped together so they move as a single unit.
+
+<figure>
+  <img
+    src="/marblie/marblie-debug.jpg"
+    alt="Screenshot of debug mode showing collision meshes of different tracks"
+  />
+  <figcaption>
+    Screenshot of debug mode showing collision meshes of different tracks
+  </figcaption>
+</figure>
+
+## Transforming Tracks
+
+I aimed for a simple, intuitive, and responsive system—something that feels like dragging magnets around on a refrigerator. I started by looking into `THREE.TransformControls` to understand how it worked. Since tracks only move on one plane, I kept things constrained to that surface and eventually combined translation, rotation, and scaling into a unified control. Once I had a clear idea of what I needed, I rebuilt everything from scratch, using the source code as a reference.
+
+### Controls
+
+Transformation handles are activated when a track is clicked. I used `THREE.Raycaster` objects to manage all clicking interactions on meshes and handles.
+
+- **Translation**
+  Tracks can be moved by clicking and dragging anywhere on the mesh. I apply an offset so the track doesn’t snap directly to the pointer's center, preserving its natural position.
+- **Scale & Rotation**
+  Scaling and rotation are done via handles on either end. Rotation is calculated using signed angles based on the direction and magnitude of the drag. Scaling happens along one axis, with the distance from the center to the pointer clamped to a min-max range.
+- **Curve Track Editing**
+  For curve tracks, instead of scaling or rotating, users can move the three Bezier control points directly using handles. Every frame, the mesh geometry is updated with a new `THREE.ExtrudeGeometry` based on the modified curve.
+
+<figure>
+  <img src="/marblie/marblie-editing.jpg" alt="Screenshot of editing tracks" />
+  <figcaption>Screenshot of editing tracks</figcaption>
+</figure>
+
+## Additional Features
+
+### Marble Timer
+
+A new marble is spawned every 3 seconds at the starting point.
+
+### Dark Mode
+
+Dark mode changes more than just colors. The scene’s lighting shifts as well: the main directional light rotates and fades, ambient light dims, and emissive values for the marbles and logo increase. An area light behind the logo brightens to create a soft, nighttime glow.
+
+### Follow Marble Mode
+
+The camera locks onto the most recently spawned marble. On each frame, it follows the marble by adding its positional delta to the camera, and sets the orbit controls to rotate around the marble’s center.
+
+## Ending Thoughts
+
+I was surprised by how performant Rapier’s WebAssembly integration turned out to be. It handled physics simulations smoothly—even with complex trimeshes. I had a lot of fun bringing the tracks to life with animated interactions and subtle details.
+
+There’s still a lot of room for new track types, and imagining what else I could build has been a big part of the fun. Along the way, I learned a lot about lighting optimization in Three.js and how different Rapier colliders behave under the hood. It’s been a rewarding little sandbox, and I’m looking forward to expanding it further.
+
+Thanks for reading. Try Marblie out [here](https://marblie.com), and check out the [source code](https://github.com/younghoonam/marblie) if you'd like.
