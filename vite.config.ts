@@ -50,52 +50,10 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          // React core - MUST be together (React and React-DOM)
-          // These are tightly coupled and should never be split
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-core'
-          }
-          // React Router - depends on React
-          // Rollup's dependency analysis ensures react-core loads first
-          if (id.includes('node_modules/react-router')) {
-            return 'react-router-vendor'
-          }
-          // React-dependent UI libraries
-          // These can be separate chunks; Rollup handles load order
-          if (id.includes('node_modules/next-themes')) {
-            return 'react-ui-vendor'
-          }
-          // MDX React runtime - depends on React
-          if (id.includes('node_modules/@mdx-js/react')) {
-            return 'mdx-runtime-vendor'
-          }
-          // MDX build tools (build-time only, not runtime)
-          if (
-            id.includes('node_modules/@mdx-js/mdx') ||
-            id.includes('node_modules/@mdx-js/rollup') ||
-            id.includes('node_modules/remark') ||
-            id.includes('node_modules/rehype')
-          ) {
-            return 'mdx-build-vendor'
-          }
-          // Heavy content libraries (can be lazy-loaded)
-          if (
-            id.includes('node_modules/three') ||
-            id.includes('node_modules/d3') ||
-            id.includes('node_modules/katex') ||
-            id.includes('node_modules/@codesandbox')
-          ) {
-            return 'content-vendor'
-          }
-          // Other node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor'
-          }
-        },
-      },
-    },
+    // Let Vite handle chunk splitting automatically
+    // Only add manual chunks if analysis shows specific issues:
+    // - Duplication across chunks
+    // - Massive vendor bundle
+    // - Hydration issues
   },
 })
