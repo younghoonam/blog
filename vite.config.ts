@@ -41,6 +41,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+    dedupe: ['react', 'react-dom'],
   },
   server: {
     fs: {
@@ -52,20 +53,35 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // React and React DOM together (avoid circular dependency)
+          // React core - MUST be together (React and React-DOM)
+          // These are tightly coupled and should never be split
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-vendor'
+            return 'react-core'
           }
-          // MDX and related
+          // React Router - depends on React
+          // Rollup's dependency analysis ensures react-core loads first
+          if (id.includes('node_modules/react-router')) {
+            return 'react-router-vendor'
+          }
+          // React-dependent UI libraries
+          // These can be separate chunks; Rollup handles load order
+          if (id.includes('node_modules/next-themes')) {
+            return 'react-ui-vendor'
+          }
+          // MDX React runtime - depends on React
+          if (id.includes('node_modules/@mdx-js/react')) {
+            return 'mdx-runtime-vendor'
+          }
+          // MDX build tools (build-time only, not runtime)
           if (
-            id.includes('node_modules/@mdx-js') ||
-            id.includes('node_modules/mdx') ||
+            id.includes('node_modules/@mdx-js/mdx') ||
+            id.includes('node_modules/@mdx-js/rollup') ||
             id.includes('node_modules/remark') ||
             id.includes('node_modules/rehype')
           ) {
-            return 'mdx-vendor'
+            return 'mdx-build-vendor'
           }
-          // Heavy content libraries
+          // Heavy content libraries (can be lazy-loaded)
           if (
             id.includes('node_modules/three') ||
             id.includes('node_modules/d3') ||
@@ -73,10 +89,6 @@ export default defineConfig({
             id.includes('node_modules/@codesandbox')
           ) {
             return 'content-vendor'
-          }
-          // Router
-          if (id.includes('node_modules/react-router')) {
-            return 'router-vendor'
           }
           // Other node_modules
           if (id.includes('node_modules')) {
