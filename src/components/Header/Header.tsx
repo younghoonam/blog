@@ -1,14 +1,19 @@
+/**
+ * Header component with logo and navigation.
+ */
 import { Link } from 'react-router-dom'
+import { memo } from 'react'
 import LangButton from './LangButton'
 import styles from './Header.module.css'
 import HoverUnderline from '../HoverUnderline/HoverUnderline'
 import ThemeToggle from './ThemeToggle'
+import type { HeaderProps } from '@/types'
 
-export default function Header({ lang }) {
+function Header({ lang }: HeaderProps) {
   return (
     <header>
       <div className={styles.header}>
-        <Link to={lang ? `/${lang}` : '/'} className={styles.logo}>
+        <Link to={`/${lang}`} className={styles.logo}>
           Younghoo Nam
         </Link>
         <div className={styles.toggleWrapper}>
@@ -23,3 +28,5 @@ export default function Header({ lang }) {
     </header>
   )
 }
+
+export default memo(Header)

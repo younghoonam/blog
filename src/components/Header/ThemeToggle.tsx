@@ -1,8 +1,11 @@
+/**
+ * Theme toggle button component.
+ */
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, memo } from 'react'
 import styles from './Header.module.css'
 
-export default function ThemeToggle() {
+function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -11,11 +14,7 @@ export default function ThemeToggle() {
   }, [])
 
   const sun = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 171.88 171.88"
-      className={styles.sun}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 171.88 171.88" className={styles.sun}>
       <g>
         <circle cx="85.94" cy="85.94" r="41.39" />
         <rect x="6.56" y="69.62" width="19.88" height="32.95" transform="translate(-69.56 102.78) rotate(-90.13)" />
@@ -45,8 +44,14 @@ export default function ThemeToggle() {
   if (!mounted) return <div className={styles.moon} />
 
   return (
-    <button type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={styles.themeToggle}>
+    <button
+      type="button"
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      className={styles.themeToggle}
+    >
       {theme === 'dark' ? moon : sun}
     </button>
   )
 }
+
+export default memo(ThemeToggle)

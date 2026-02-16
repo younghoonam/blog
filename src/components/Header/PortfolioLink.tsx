@@ -1,3 +1,6 @@
+/**
+ * Portfolio link component.
+ */
 import styles from './Header.module.css'
 
 export default function PortfolioLink() {

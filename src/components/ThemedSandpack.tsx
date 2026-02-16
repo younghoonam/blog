@@ -1,12 +1,17 @@
+/**
+ * Themed Sandpack component wrapper.
+ */
 import { Sandpack } from '@codesandbox/sandpack-react'
+import type { SandpackProps } from '@codesandbox/sandpack-react'
 
-export default function ThemedSandpack(props) {
+export default function ThemedSandpack(props: SandpackProps) {
   return (
     <Sandpack
       {...props}
       options={{
         showLineNumbers: true,
         editorHeight: 500,
+        ...props.options,
       }}
       theme={{
         colors: {

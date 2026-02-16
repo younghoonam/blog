@@ -1,4 +1,7 @@
-import ThemedSandpack from "@/components/ThemedSandpack";
+/**
+ * Lathe component with Sandpack code editor.
+ */
+import ThemedSandpack from '@/components/ThemedSandpack'
 
 function Lathe() {
   return (
@@ -6,12 +9,12 @@ function Lathe() {
       template="vanilla"
       customSetup={{
         dependencies: {
-          three: "latest",
+          three: 'latest',
         },
       }}
       files={{
-        "/styles.css": `body{margin:0;}`,
-        "/index.js": `import * as THREE from 'three';
+        '/styles.css': `body{margin:0;}`,
+        '/index.js': `import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import "./styles.css"
 
@@ -89,8 +92,8 @@ window.addEventListener('resize', () => {
 `,
       }}
     />
-  );
+  )
 }
 
-export default Lathe;
-export { Lathe };
+export default Lathe
+export { Lathe }

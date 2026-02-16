@@ -1,45 +1,59 @@
-"use client";
+/**
+ * Slider component for parameter input.
+ */
+import { useEffect, useRef, useState, memo } from 'react'
+import styles from './Slider.module.css'
 
-// Libraries
-import { useEffect, useRef, useState } from "react";
+interface Mark {
+  value: number
+  label: string
+}
 
-// Styles
-import styles from "./Slider.module.css";
+interface SliderProps {
+  min?: number
+  max?: number
+  defaultValue?: number
+  label?: string
+  id?: string
+  name?: string
+  marks?: Mark[]
+  ticks?: number
+  step?: number
+}
 
 function Slider({
   min = 0,
   max = 100,
   defaultValue = 50,
-
-  label = "",
-  id = "",
-  name = "",
+  label = '',
+  id = '',
+  name = '',
   marks,
   ticks = 10,
   step = 1,
-  isMillimeter = true,
-}) {
-  const sliderRef = useRef(null);
-  const [value, setValue] = useState(defaultValue);
+}: SliderProps) {
+  const sliderRef = useRef<HTMLInputElement>(null)
+  const [value, setValue] = useState(defaultValue)
 
-  function onChange(e) {
-    setValue(e.target.value);
+  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setValue(Number(e.target.value))
   }
 
   useEffect(() => {
-    const slider = sliderRef.current;
-    const percentage = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-    slider.style.setProperty("--progress", `${percentage}%`);
-  });
+    const slider = sliderRef.current
+    if (!slider) return
+    const percentage = ((Number(slider.value) - min) / (max - min)) * 100
+    slider.style.setProperty('--progress', `${percentage}%`)
+  })
 
-  function updatePercentage(event) {
-    const slider = event.target;
-    const percentage = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-    slider.style.setProperty("--progress", `${percentage}%`);
+  function updatePercentage(event: React.ChangeEvent<HTMLInputElement>) {
+    const slider = event.target
+    const percentage = ((Number(slider.value) - min) / (max - min)) * 100
+    slider.style.setProperty('--progress', `${percentage}%`)
   }
 
   return (
-    <div className={"parameterWrapper " + (ticks ? "parameterDivider" : "parameterDivider")}>
+    <div className={'parameterWrapper ' + (ticks ? 'parameterDivider' : 'parameterDivider')}>
       <div className={`${styles.parameterContainer} ${ticks ? styles.tickSpace : null}`}>
         <div className={styles.parameterLabel}>
           <label htmlFor={id}>{label}</label>
@@ -56,15 +70,15 @@ function Slider({
               min={min}
               max={max}
               onChange={(e) => {
-                onChange(e);
-                updatePercentage(e);
+                onChange(e)
+                updatePercentage(e)
               }}
             />
             {ticks ? (
               <div className={styles.ticks}>
                 {Array.from({ length: ticks }, (_, i) =>
                   (i + 1) % 5 === 1 ? (
-                    <span key={i} className={styles.tick + " " + styles.thick}></span>
+                    <span key={i} className={styles.tick + ' ' + styles.thick}></span>
                   ) : (
                     <span key={i} className={styles.tick}></span>
                   )
@@ -99,8 +113,8 @@ function Slider({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Slider;
-export { Slider };
+export default memo(Slider)
+export { Slider }

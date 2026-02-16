@@ -1,6 +1,10 @@
+/**
+ * Footer component.
+ */
+import { memo } from 'react'
 import styles from './Footer.module.css'
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.copywrite}>© 2025 Younghoo Nam</div>
@@ -15,3 +19,5 @@ export default function Footer() {
     </footer>
   )
 }
+
+export default memo(Footer)
