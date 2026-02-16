@@ -6,7 +6,7 @@ import type { MDXModule } from '@/types/mdx'
 
 const mdxGlob = import.meta.glob('../content/**/*.mdx') as Record<string, () => Promise<MDXModule>>
 
-const KNOWN_SLUGS: readonly PostSlug[] = ['bucket-hat', 'marblie'] as const
+const KNOWN_SLUGS: readonly PostSlug[] = ['aurora', 'bucket-hat', 'marblie'] as const
 
 interface ParsedPath {
   slug: PostSlug

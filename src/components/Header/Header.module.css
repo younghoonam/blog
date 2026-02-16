@@ -4,6 +4,11 @@
   align-items: center;
   margin-top: 1rem;
   margin-bottom: 8rem;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: var(--container-padding);
+  box-sizing: border-box;
 }
 
 .logo {
@@ -22,9 +27,19 @@
   padding: 0;
 }
 
-.portfolioLink {
+.portfolioLinkContainer {
   position: absolute;
   top: 5rem;
+  left: 0;
+  right: 0;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: var(--container-padding);
+  box-sizing: border-box;
+}
+
+.portfolioLink {
   display: block;
   width: fit-content;
   background: var(--background-secondary);

@@ -1,0 +1,79 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.0/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignore": [
+			"**/node_modules/**",
+			"**/dist/**",
+			"**/dist-ssr/**",
+			"**/.vite/**",
+			"**/build/**",
+			"**/*.local"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 1,
+		"lineWidth": 100
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "warn"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "warn"
+			},
+			"style": {
+				"useImportType": "error",
+				"useConst": "error"
+			},
+			"complexity": {
+				"noForEach": "off"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"semicolons": "always",
+			"trailingCommas": "es5"
+		},
+		"globals": ["React"]
+	},
+	"json": {
+		"formatter": {
+			"enabled": true
+		}
+	},
+	"overrides": [
+		{
+			"include": ["*.mdx"],
+			"formatter": {
+				"enabled": true
+			},
+			"linter": {
+				"enabled": false
+			}
+		},
+		{
+			"include": ["*.css", "*.module.css"],
+			"formatter": {
+				"enabled": true
+			},
+			"linter": {
+				"enabled": false
+			}
+		}
+	]
+}

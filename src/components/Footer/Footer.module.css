@@ -4,6 +4,11 @@
   border-top: solid 1px #333;
   display: flex;
   justify-content: space-between;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: var(--container-padding);
+  box-sizing: border-box;
 }
 
 .links {
