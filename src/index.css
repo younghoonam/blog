@@ -1,0 +1,324 @@
+@import "katex/dist/katex.min.css";
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/PretendardVariable.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --background: #f2f2f2;
+  --background-secondary: #eee;
+  --background-tetiray: #b7b7b7;
+  --color-1: black;
+  --color-2: #333;
+  --color-3: #666;
+  --color-4: #999;
+  --border-radius: 0.3em;
+  --invert: invert(0%);
+
+  --bg-color: #f9f9fb;
+  --text-color: #5e6687;
+  --border-color: rgba(100, 100, 100, 0.3);
+  --selection-bg: #dfe2f1;
+  --comment-color: #898ea4;
+  --punctuation-color: #5e6687;
+  --boolean-number-color: #c76b29;
+  --property-color: #c08b30;
+  --tag-color: #3d8fd1;
+  --string-color: #22a2c9;
+  --selector-color: #6679cc;
+  --attr-name-color: #c76b29;
+  --attr-value-color: #ac9739;
+  --statement-color: #22a2c9;
+  --variable-color: #3d8fd1;
+  --important-color: #c94922;
+  --line-number-border: #cccccd;
+  --line-number-color: #979db4;
+  --line-highlight-bg: rgba(107, 115, 148, 0.2);
+  --inserted-line-bg: rgba(16, 185, 129, 0.2);
+  --deleted-line-bg: rgba(239, 68, 68, 0.2);
+  --highlight-line-bg: rgba(55, 65, 81, 0.5);
+  --highlight-border: rgb(59, 130, 246);
+  --inserted-border: #202746;
+}
+
+[data-theme="dark"] {
+  --background: #0d0d0d;
+  --background-secondary: #2e2e2e;
+  --background-tetiray: #515151;
+  --color-1: white;
+  --color-2: #ddd;
+  --color-3: #999;
+  transition: color 1s;
+  --invert: invert(100%);
+
+  --bg-color: #131313;
+  --text-color: #dfe2f1;
+  --border-color: rgba(150, 150, 150, 0.2);
+  --selection-bg: #5e6687;
+  --comment-color: #898ea4;
+  --punctuation-color: #dfe2f1;
+  --boolean-number-color: #f08c36;
+  --property-color: #e6b94d;
+  --tag-color: #61afef;
+  --string-color: #56c2e0;
+  --selector-color: #8a91e8;
+  --attr-name-color: #f08c36;
+  --attr-value-color: #d0b344;
+  --statement-color: #56c2e0;
+  --variable-color: #61afef;
+  --important-color: #f47067;
+  --line-number-border: #5e6687;
+  --line-number-color: #cccccd;
+  --line-highlight-bg: rgba(107, 115, 148, 0.4);
+  --inserted-line-bg: rgba(16, 185, 129, 0.3);
+  --deleted-line-bg: rgba(239, 68, 68, 0.3);
+  --highlight-line-bg: rgba(150, 160, 180, 0.3);
+  --highlight-border: rgb(96, 165, 250);
+  --inserted-border: #dfe2f1;
+}
+
+* {
+  transition: color 0.5s;
+  transition: background-color 0.5s;
+}
+
+html {
+  font-family: "Pretendard", sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  --inline-margin: 2rem;
+  margin: 0 auto;
+  width: clamp(40% - var(--inline-margin), 20rem + 30% - var(--inline-margin), 100% - var(--inline-margin));
+}
+
+main {
+  min-height: calc(100vh - 20rem);
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+h1, h2, h3 {
+  color: var(--color-1);
+}
+
+p, li {
+  color: var(--color-2);
+}
+
+.sp-wrapper {
+  --width: min(140%, calc(100vw - (var(--inline-margin))));
+  width: var(--width) !important;
+  align-self: center !important;
+}
+
+/* Code block styles (from codeBlockStyle.css) */
+pre[class*="language-"] {
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: Consolas, Menlo, Monaco, "Andale Mono WT", "Andale Mono", "Lucida Console",
+    "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono",
+    "Nimbus Mono L", "Courier New", Courier, monospace;
+  font-size: 13px;
+  line-height: 1.375;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+pre > code[class*="language-"] {
+  font-size: 1em;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+  text-shadow: none;
+  background: var(--selection-bg);
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+  text-shadow: none;
+  background: var(--selection-bg);
+}
+
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+}
+
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em;
+  border-radius: var(--border-radius);
+}
+
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: var(--comment-color); }
+.token.punctuation { color: var(--punctuation-color); }
+.token.namespace { opacity: 0.7; }
+.token.operator, .token.boolean, .token.number { color: var(--boolean-number-color); }
+.token.property { color: var(--property-color); }
+.token.tag { color: var(--tag-color); }
+.token.string { color: var(--string-color); }
+.token.selector { color: var(--selector-color); }
+.token.attr-name { color: var(--attr-name-color); }
+.token.entity, .token.url, .language-css .token.string, .style .token.string { color: var(--string-color); }
+.token.attr-value, .token.keyword, .token.control, .token.directive, .token.unit { color: var(--attr-value-color); }
+.token.statement, .token.regex, .token.atrule { color: var(--statement-color); }
+.token.placeholder, .token.function, .token.variable { color: var(--variable-color); }
+.token.deleted { text-decoration: line-through; }
+.token.inserted { border-bottom: 1px dotted var(--inserted-border); text-decoration: none; }
+.token.italic { font-style: italic; }
+.token.important, .token.bold { font-weight: bold; }
+.token.important { color: var(--important-color); }
+.token.entity { cursor: help; }
+
+pre > code.highlight {
+  outline: 0.4em solid var(--important-color);
+  outline-offset: 0.4em;
+}
+
+.line-numbers.line-numbers .line-numbers-rows {
+  border-right-color: var(--line-number-border);
+}
+
+.line-numbers .line-numbers-rows > span:before {
+  color: var(--line-number-color);
+}
+
+.line-highlight.line-highlight {
+  background: var(--line-highlight-bg);
+  background: -webkit-linear-gradient(left, var(--line-highlight-bg) 70%, rgba(107, 115, 148, 0));
+  background: linear-gradient(to right, var(--line-highlight-bg) 70%, rgba(107, 115, 148, 0));
+}
+
+pre { overflow-x: auto; }
+
+.code-highlight { float: left; min-width: 100%; }
+
+.code-line {
+  display: block;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  border-left: 4px solid rgba(0, 0, 0, 0);
+}
+
+.code-line.inserted { background-color: var(--inserted-line-bg); }
+.code-line.deleted { background-color: var(--deleted-line-bg); }
+
+.highlight-line {
+  margin-left: -16px;
+  margin-right: -16px;
+  background-color: var(--highlight-line-bg);
+  border-left: 4px solid var(--highlight-border);
+}
+
+.line-number::before {
+  display: inline-block;
+  width: 1rem;
+  text-align: right;
+  margin-right: 16px;
+  margin-left: -8px;
+  color: var(--line-number-color);
+  content: attr(line);
+  font-size: 0.6em;
+}
+
+/* MDX content styles */
+.illustration {
+  background: #eee;
+  filter: var(--invert);
+}
+
+.MDXContentWrapper p {
+  line-height: 170%;
+}
+
+.MDXContentWrapper a {
+  font-weight: 600;
+  color: var(--color-4);
+  transition: 0.3s;
+}
+
+.MDXContentWrapper a:hover {
+  color: var(--color-1);
+}
+
+.MDXContentWrapper a::after {
+  content: "↗";
+}
+
+.MDXContentWrapper video {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+  margin-block: 1rem;
+}
+
+.MDXContentWrapper li {
+  line-height: 180%;
+}
+
+.MDXContentWrapper h2 {
+  margin: 2rem 0 0rem 0;
+}
+
+.MDXContentWrapper h3 {
+  margin: 2rem 0 0 0;
+}
+
+.MDXContentWrapper img {
+  background: var(--bg-color);
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+}
+
+.MDXContentWrapper code:not(pre code) {
+  color: var(--property-color);
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  border: 1px var(--border-color) solid;
+  padding: 2px 6px 2px;
+  font-family: Consolas, Menlo, Monaco, "Andale Mono WT", "Andale Mono", "Lucida Console",
+    "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",
+    "Liberation Mono", "Nimbus Mono L", "Courier New", Courier, monospace;
+}
+
+.MDXContentWrapper figure { margin: 0; }
+.MDXContentWrapper figcaption p { margin: 0; }
+.MDXContentWrapper figcaption {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: var(--color-3);
+}

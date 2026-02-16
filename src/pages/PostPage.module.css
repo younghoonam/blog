@@ -1,0 +1,29 @@
+.backButton {
+  position: absolute;
+  top: 9.5rem;
+  color: var(--color-3);
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.date {
+  margin-bottom: 5rem;
+}
+
+.MDXWrapper {
+  max-width: 45rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  margin-top: 3rem;
+}
+
+.MDXContentWrapper {
+  max-width: 45rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  margin-top: 3rem;
+}
