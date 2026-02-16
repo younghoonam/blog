@@ -1,0 +1,318 @@
+---
+title: "Creating Emotional Connections Through Code: Building Aurora Psychotherapy"
+date: "2025-02-16"
+slug: "aurora"
+---
+
+import { AuroraSandpack } from "./AuroraSandpack";
+
+When Aurora CFT, a psychotherapy service specializing in emotionally focused therapy, approached me to build their website, I faced an interesting challenge: how do you convey emotion and create a sense of connection through code? Unlike my previous projects focused on physics simulation or mathematical pattern generation, this required thinking about how visual elements can evoke feelings and build trust—especially important in a healthcare context.
+
+The result became a website centered around an interactive visual element that resembles the aurora borealis, symbolizing the fluidity of emotions. This post explores how I approached emotional design through code, from custom shader development using Simplex noise to coordinating animations that enhance rather than distract from content.
+
+<figure>
+  <img src="/aurora/aurora-main.webp" alt="Aurora Psychotherapy website homepage" />
+  <figcaption>Aurora Psychotherapy website homepage</figcaption>
+</figure>
+
+## The Challenge: Emotion Through Code
+
+Therapy websites often fall into two categories: overly clinical and sterile, or trying too hard to be "warm" with stock photos. Aurora needed something different—a site that felt both professional and emotionally resonant, where the visuals themselves communicated the fluid, dynamic nature of emotions.
+
+The aurora borealis became the perfect metaphor: ever-changing, beautiful, and impossible to fully capture—much like human emotions. But translating this into code meant solving several technical challenges:
+
+1. Creating organic, fluid motion that feels natural
+2. Balancing visual richness with performance
+3. Ensuring animations enhance rather than distract from content
+4. Making it work across devices
+
+## Custom Shader Development with Simplex Noise
+
+The heart of the Aurora visual identity is a central interactive element built with custom GLSL shaders using **React Three Fiber**. Rather than using pre-made Three.js materials, I needed shaders that could create the organic, flowing quality of aurora lights using procedural noise functions.
+
+### The Visual Concept
+
+The aurora effect uses a simple `planeGeometry` with custom shaders that create flowing, organic patterns through Simplex noise. The key insight was that noise functions—specifically Simplex noise—create the natural, unpredictable variation needed for an aurora-like effect.
+
+Try the interactive example below to see the aurora shader in action. You can modify the shader code and see the results in real-time:
+
+<AuroraSandpack />
+
+The component above demonstrates the core Aurora shader implementation. Here's how it works:
+
+```jsx
+// Aurora component using React Three Fiber
+import { Canvas } from "@react-three/fiber";
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+
+function PlaneAurora({ hue }) {
+  const materialRef = useRef();
+
+  const shaderParams = {
+    vertexShader: planeVertexShader,
+    fragmentShader: planeFragmentShader,
+    uniforms: {
+      uTime: { value: Math.random() * 10000 },
+      uHue: { value: hue },
+    },
+  };
+
+  useFrame((state, delta) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value += delta / 10;
+    }
+  });
+
+  return (
+    <mesh>
+      <planeGeometry args={[20, 10]} />
+      <shaderMaterial ref={materialRef} args={[shaderParams]} transparent={true} />
+    </mesh>
+  );
+}
+```
+
+### Simplex Noise for Organic Patterns
+
+The fragment shader uses **Simplex 3D noise** to create the flowing color patterns. Simplex noise is perfect for this because it produces smoother, more natural-looking patterns than Perlin noise, and it's computationally efficient.
+
+```glsl
+// Fragment shader using Simplex noise
+uniform float uTime;
+uniform float uHue;
+
+varying vec2 vUv;
+
+// Simplex 3D Noise implementation (by Ian McEwan, Stefan Gustavson)
+float snoise(vec3 v) {
+  // ... (full implementation creates smooth, organic noise)
+}
+
+void main() {
+  vec3 color = vec3(0.980, 0.964, 0.937);
+  float time = uTime * 0.75;
+  
+  // Create three separate noise channels for RGB
+  float red = snoise(vec3(vUv.x * 2.0, vUv.y * 0.5, time));
+  red = wave(red, 0.43, 0.62, 0.0, 2.0);
+  
+  float green = snoise(vec3(vUv.x * 2.0 + 100.0, vUv.y * 0.5 + 100.0, time)) * 0.8;
+  float blue = snoise(vec3(vUv.x * 2.0 + 200.0, vUv.y * 0.5 + 300.0, time)) * 0.6;
+  
+  // Subtract noise from color channels to create aurora effect
+  color.yz -= red;
+  color.xz -= green;
+  color.xy -= blue;
+  
+  // Apply hue shift for different pages
+  color = hueShift(color, uHue);
+  
+  gl_FragColor = vec4(color, alpha);
+}
+```
+
+The key technique here is **subtracting noise from color channels** rather than adding it. This creates the characteristic aurora look where colors appear to "flow" through darker areas, creating depth and movement.
+
+### Hue Shifting for Emotional Variation
+
+Different pages use different hue values to create subtle emotional variation while maintaining visual consistency:
+
+```jsx
+// Different pages use different hues
+<Aurora hue={5.8} />  // Areas page
+<Aurora hue={2.8} />  // EFT page
+<Aurora />            // Default (hue = 0)
+```
+
+The hue shift function converts RGB to YIQ color space, adjusts the hue, and converts back—a technique that preserves luminance while changing color tone.
+
+```glsl
+vec3 hueShift(vec3 color, float hueAdjust) {
+    // Convert RGB to YIQ color space
+    const vec3 kRGBToYPrime = vec3(0.299, 0.587, 0.114);
+    const vec3 kRGBToI = vec3(0.596, -0.275, -0.321);
+    const vec3 kRGBToQ = vec3(0.212, -0.523, 0.311);
+    
+    float YPrime = dot(color, kRGBToYPrime);
+    float I = dot(color, kRGBToI);
+    float Q = dot(color, kRGBToQ);
+    float hue = atan(Q, I);
+    float chroma = sqrt(I * I + Q * Q);
+    
+    hue += hueAdjust;
+    
+    // Convert back to RGB
+    Q = chroma * sin(hue);
+    I = chroma * cos(hue);
+    // ... (conversion back to RGB)
+}
+```
+
+## Performance Optimization
+
+One of the biggest challenges was maintaining visual richness while ensuring the site performs well across devices, especially on mobile.
+
+### Key Optimizations
+
+1. **Device Pixel Ratio Control**: `dpr={[0.5, 1]}` reduces rendering resolution on high-DPI displays
+2. **Low-Power GPU Preference**: `gl={{ powerPreference: "low-power" }}` helps preserve battery
+3. **Minimal Post-Processing**: Very low `resolutionScale` (0.000001) for effects
+4. **Simple Geometry**: Using `planeGeometry` instead of complex meshes
+5. **Efficient Time Updates**: Time increments by `delta / 10` for slower, smoother animation
+
+```jsx
+<Canvas dpr={[0.5, 1]} gl={{ powerPreference: "low-power" }}>
+  {/* ... */}
+  <EffectComposer multisampling={0} resolutionScale={0.000001}>
+    <Noise opacity={0.1} />
+    <Sepia intensity={0.2} />
+  </EffectComposer>
+</Canvas>
+```
+
+These optimizations ensure the aurora effect runs smoothly even on lower-end devices while maintaining its visual impact.
+
+## GSAP Integration: Word-by-Word Animations
+
+The site uses GSAP not for section animations, but for a more subtle effect: **word-by-word color transitions**. This creates a sense of progression and engagement without being distracting.
+
+### ColorfulText Component
+
+The `ColorfulText` component randomly colors words and fades them to black as users scroll:
+
+```jsx
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+export default function ColorfulText({ children }) {
+  const wordRefs = useRef([]);
+  const colorChance = 0.75;
+
+  // Process children and randomly color some words
+  const processChildren = (nodes) => {
+    return Children.map(nodes, (child) => {
+      if (typeof child === "string") {
+        return child.split(/(\s+)/).map((word, index) => {
+          if (!word.trim()) return word;
+          const isColored = Math.random() >= colorChance;
+          const color = isColored
+            ? `hsl(${Math.random() * 100 - 50}, ${Math.random() * 20 + 80}%, ${Math.random() * 20 + 40}%)`
+            : "inherit";
+
+          return isColored ? (
+            <span key={index} ref={(el) => wordRefs.current.push(el)} style={{ color }}>
+              {word}
+            </span>
+          ) : (
+            word
+          );
+        });
+      }
+      // ... handle other node types
+    });
+  };
+
+  useEffect(() => {
+    wordRefs.current.forEach((wordEl) => {
+      if (wordEl) {
+        gsap.to(wordEl, {
+          scrollTrigger: {
+            trigger: wordEl,
+            toggleActions: "restart none restart reset",
+          },
+          color: "#000",
+          duration: Math.random() + 2,
+          ease: "expo.out",
+        });
+      }
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  return <>{processChildren(children)}</>;
+}
+```
+
+This creates a subtle, engaging effect where colorful words gradually fade to black as you read, creating a sense of progression and completion.
+
+## Post-Processing Effects
+
+The aurora effect uses minimal post-processing to add texture and warmth:
+
+- **Noise**: Adds subtle grain (`opacity={0.1}`)
+- **Sepia**: Adds warmth (`intensity={0.2}`)
+
+These effects are applied with extremely low resolution (`resolutionScale={0.000001}`) to minimize performance impact while still adding visual depth.
+
+## Design Process: From Concept to Implementation
+
+The design process for Aurora was iterative, with each version getting closer to the emotional goal.
+
+### Initial Concepts
+
+I started with several visual concepts:
+- Complex 3D geometries (too heavy)
+- Particle systems (too chaotic)
+- Simple gradients (too static)
+
+The aurora concept emerged from thinking about what emotion feels like—something that's always present but constantly changing. The breakthrough was realizing that **subtracting noise from color channels** creates the characteristic aurora look.
+
+### Iteration and Refinement
+
+Each iteration focused on:
+1. **Motion quality**: Does it feel natural? (Simplex noise solved this)
+2. **Color harmony**: Do the colors work together emotionally? (Hue shifting allowed variation)
+3. **Performance**: Can it run smoothly? (Optimizations like DPR control)
+4. **Readability**: Does it enhance or distract from content? (Subtle post-processing)
+
+The final version balances all these concerns, creating something that feels both technically impressive and emotionally resonant.
+
+## Lessons Learned
+
+### Code as a Design Tool
+
+This project reinforced that code isn't just for implementing designs—it's a design tool itself. The ability to iterate quickly in code, tweak shader parameters, and see immediate results was crucial to finding the right emotional tone.
+
+### Emotional Design Principles
+
+1. **Subtlety over spectacle**: The aurora is present but never overwhelming
+2. **Consistency**: Visual language should reinforce the message
+3. **Performance matters**: A stuttering animation breaks emotional connection
+4. **Context is key**: What works for a game might not work for therapy
+
+### The Power of Noise Functions
+
+Simplex noise was the perfect tool for this project. It creates natural, organic patterns that feel alive without being chaotic. The key insight was using noise to **subtract** from colors rather than add, creating depth and flow.
+
+### React Three Fiber Benefits
+
+Using React Three Fiber instead of raw Three.js made the code more maintainable and React-friendly. The `useFrame` hook for animations and declarative component structure made it easier to integrate with the rest of the Next.js application.
+
+## Technical Stack
+
+- **Next.js** – Framework for the site structure
+- **React Three Fiber** – React renderer for Three.js
+- **Custom GLSL Shaders** – Aurora visual effects using Simplex noise
+- **GSAP** – Word-by-word color animations
+- **Resend** – Contact form email functionality
+- **@react-three/postprocessing** – Post-processing effects
+
+## Final Thoughts
+
+Building Aurora taught me that technical skills and emotional design aren't separate—they're deeply connected. The Simplex noise that creates flowing colors, the hue shifting that allows emotional variation, the performance optimizations that ensure smoothness—all of these technical decisions contribute to the emotional impact.
+
+For developers working on projects that need to convey emotion, my advice is:
+
+1. **Start with the feeling**: What emotion should users feel?
+2. **Choose your metaphor**: What visual concept represents that emotion?
+3. **Iterate in code**: Use code as a design tool, not just an implementation tool
+4. **Test with real users**: Technical perfection means nothing if it doesn't resonate emotionally
+5. **Balance everything**: Performance, aesthetics, and emotion all matter
+
+The Aurora website demonstrates that code can be beautiful, emotional, and meaningful—not just functional. It's a reminder that as developers, we're not just building features; we're creating experiences.
+
+Thanks for reading. Check out the live site [here](https://aurora-psychotherapy.vercel.app/).

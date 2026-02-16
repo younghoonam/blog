@@ -1,0 +1,286 @@
+---
+title: "GLSL 쉐이더로 구현한 감성적인 시각효과"
+date: "2025-02-16"
+slug: "aurora"
+---
+
+import { AuroraSandpack } from "./AuroraSandpack";
+
+감정 중심 치료(EFT) 전문 심리치료 서비스인 오로라 심리상담 연구소의 웹사이트를 제작할 때, 흥미로운 도전에 직면했습니다: 코드로 어떻게 감정을 전달하고 연결감을 만들 수 있을까? 물리 시뮬레이션이나 수학적 패턴 생성에 초점을 맞춘 이전 프로젝트들과 달리, 이 프로젝트는 시각적 요소가 어떻게 감정을 불러일으키고 신뢰를 구축할 수 있는지 생각해야 했습니다—특히 헬스케어 맥락에서 중요합니다.
+
+결과는 감정의 유동성을 상징하는 오로라 보레알리를 닮은 인터랙티브한 시각적 요소를 중심으로 한 웹사이트가 되었습니다. 이 글은 Simplex 노이즈를 사용한 커스텀 셰이더 개발부터 콘텐츠를 방해하지 않고 향상시키는 애니메이션 조율까지, 코드를 통한 감정적 디자인에 접근한 방법을 탐구합니다.
+
+<figure>
+  <img src="/aurora/aurora-main.webp" alt="오로라 심리상담 연구소 웹사이트 홈페이지" />
+  <figcaption>오로라 심리상담 연구소 웹사이트 홈페이지</figcaption>
+</figure>
+
+## 도전: 코드를 통한 감정
+
+치료 웹사이트는 종종 두 가지 범주로 나뉩니다: 지나치게 임상적이고 차갑거나, 스톡 사진으로 "따뜻함"을 너무 강하게 표현하려는 경우입니다. 오로라는 다른 것이 필요했습니다—전문적이면서도 감정적으로 공명하는 사이트, 시각 자체가 감정의 유동적이고 역동적인 본질을 전달하는 사이트입니다.
+
+오로라 보레알리스는 완벽한 은유가 되었습니다: 끊임없이 변화하고 아름답고 완전히 포착하기 불가능한—인간의 감정과 매우 유사합니다. 하지만 이를 코드로 번역하는 것은 여러 기술적 도전을 해결하는 것을 의미했습니다:
+
+1. 자연스럽게 느껴지는 유기적이고 유동적인 움직임 만들기
+2. 성능과 시각적 풍부함의 균형 맞추기
+3. 애니메이션이 콘텐츠를 방해하지 않고 향상시키도록 보장하기
+4. 다양한 기기에서 작동하도록 만들기
+
+## Simplex 노이즈를 사용한 커스텀 셰이더 개발
+
+오로라 시각적 아이덴티티의 핵심은 **React Three Fiber**를 사용하여 구축된 중앙 인터랙티브 요소입니다. 미리 만들어진 Three.js 재질을 사용하는 대신, 절차적 노이즈 함수를 사용하여 오로라 빛의 유기적이고 흐르는 품질을 만들 수 있는 셰이더가 필요했습니다.
+
+### 시각적 컨셉
+
+오로라 효과는 커스텀 셰이더가 있는 간단한 `planeGeometry`를 사용하여 Simplex 노이즈를 통해 흐르는 유기적 패턴을 만듭니다. 핵심 통찰은 노이즈 함수—특히 Simplex 노이즈—가 오로라 같은 효과에 필요한 자연스럽고 예측 불가능한 변화를 만든다는 것이었습니다.
+
+아래의 인터랙티브 예제를 통해 오로라 셰이더를 직접 확인해보세요. 셰이더 코드를 수정하고 실시간으로 결과를 볼 수 있습니다:
+
+<AuroraSandpack />
+
+위 컴포넌트는 핵심 오로라 셰이더 구현을 보여줍니다. 작동 방식은 다음과 같습니다:
+
+```jsx
+// React Three Fiber를 사용한 오로라 컴포넌트
+import { Canvas } from "@react-three/fiber";
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+
+function PlaneAurora({ hue }) {
+  const materialRef = useRef();
+
+  const shaderParams = {
+    vertexShader: planeVertexShader,
+    fragmentShader: planeFragmentShader,
+    uniforms: {
+      uTime: { value: Math.random() * 10000 },
+      uHue: { value: hue },
+    },
+  };
+
+  useFrame((state, delta) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value += delta / 10;
+    }
+  });
+
+  return (
+    <mesh>
+      <planeGeometry args={[20, 10]} />
+      <shaderMaterial ref={materialRef} args={[shaderParams]} transparent={true} />
+    </mesh>
+  );
+}
+```
+
+### 유기적 패턴을 위한 Simplex 노이즈
+
+프래그먼트 셰이더는 **Simplex 3D 노이즈**를 사용하여 흐르는 색상 패턴을 만듭니다. Simplex 노이즈는 Perlin 노이즈보다 더 부드럽고 자연스러운 패턴을 생성하며 계산적으로 효율적이기 때문에 이 프로젝트에 완벽합니다.
+
+```glsl
+// Simplex 노이즈를 사용하는 프래그먼트 셰이더
+uniform float uTime;
+uniform float uHue;
+
+varying vec2 vUv;
+
+// Simplex 3D 노이즈 구현 (Ian McEwan, Stefan Gustavson)
+float snoise(vec3 v) {
+  // ... (전체 구현은 부드럽고 유기적인 노이즈를 만듦)
+}
+
+void main() {
+  vec3 color = vec3(0.980, 0.964, 0.937);
+  float time = uTime * 0.75;
+  
+  // RGB를 위한 세 개의 별도 노이즈 채널 만들기
+  float red = snoise(vec3(vUv.x * 2.0, vUv.y * 0.5, time));
+  red = wave(red, 0.43, 0.62, 0.0, 2.0);
+  
+  float green = snoise(vec3(vUv.x * 2.0 + 100.0, vUv.y * 0.5 + 100.0, time)) * 0.8;
+  float blue = snoise(vec3(vUv.x * 2.0 + 200.0, vUv.y * 0.5 + 300.0, time)) * 0.6;
+  
+  // 오로라 효과를 만들기 위해 색상 채널에서 노이즈 빼기
+  color.yz -= red;
+  color.xz -= green;
+  color.xy -= blue;
+  
+  // 다른 페이지를 위한 색조 이동 적용
+  color = hueShift(color, uHue);
+  
+  gl_FragColor = vec4(color, alpha);
+}
+```
+
+여기서 핵심 기술은 노이즈를 색상에 **추가**하는 것이 아니라 **빼는** 것입니다. 이것은 색상이 더 어두운 영역을 통해 "흐르는" 것처럼 보이는 특징적인 오로라 모양을 만들어 깊이와 움직임을 만듭니다.
+
+### 감정적 변화를 위한 색조 이동
+
+다른 페이지는 시각적 일관성을 유지하면서 미묘한 감정적 변화를 만들기 위해 다른 색조 값을 사용합니다:
+
+```jsx
+// 다른 페이지는 다른 색조를 사용
+<Aurora hue={5.8} />  // 영역 페이지
+<Aurora hue={2.8} />  // EFT 페이지
+<Aurora />            // 기본값 (hue = 0)
+```
+
+색조 이동 함수는 RGB를 YIQ 색 공간으로 변환하고, 색조를 조정한 다음 다시 변환합니다—색조를 변경하면서 밝기를 보존하는 기술입니다.
+
+## 성능 최적화
+
+가장 큰 도전 중 하나는 다양한 기기에서 잘 작동하도록 보장하면서 시각적 풍부함을 유지하는 것이었습니다, 특히 모바일에서.
+
+### 주요 최적화
+
+1. **디바이스 픽셀 비율 제어**: `dpr={[0.5, 1]}`는 고해상도 디스플레이에서 렌더링 해상도를 줄입니다
+2. **저전력 GPU 선호**: `gl={{ powerPreference: "low-power" }}`는 배터리를 보존하는 데 도움이 됩니다
+3. **최소한의 후처리**: 효과를 위한 매우 낮은 `resolutionScale` (0.000001)
+4. **간단한 지오메트리**: 복잡한 메시 대신 `planeGeometry` 사용
+5. **효율적인 시간 업데이트**: 더 느리고 부드러운 애니메이션을 위해 시간이 `delta / 10`만큼 증가합니다
+
+이러한 최적화는 오로라 효과가 시각적 영향을 유지하면서 낮은 사양 기기에서도 부드럽게 실행되도록 보장합니다.
+
+## GSAP 통합: 단어별 애니메이션
+
+사이트는 섹션 애니메이션이 아닌 더 미묘한 효과를 위해 GSAP을 사용합니다: **단어별 색상 전환**. 이것은 방해가 되지 않으면서 진행감과 참여감을 만듭니다.
+
+### ColorfulText 컴포넌트
+
+`ColorfulText` 컴포넌트는 단어를 무작위로 색칠하고 사용자가 스크롤할 때 검은색으로 페이드합니다:
+
+```jsx
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+export default function ColorfulText({ children }) {
+  const wordRefs = useRef([]);
+  const colorChance = 0.75;
+
+  // 자식을 처리하고 일부 단어를 무작위로 색칠
+  const processChildren = (nodes) => {
+    return Children.map(nodes, (child) => {
+      if (typeof child === "string") {
+        return child.split(/(\s+)/).map((word, index) => {
+          if (!word.trim()) return word;
+          const isColored = Math.random() >= colorChance;
+          const color = isColored
+            ? `hsl(${Math.random() * 100 - 50}, ${Math.random() * 20 + 80}%, ${Math.random() * 20 + 40}%)`
+            : "inherit";
+
+          return isColored ? (
+            <span key={index} ref={(el) => wordRefs.current.push(el)} style={{ color }}>
+              {word}
+            </span>
+          ) : (
+            word
+          );
+        });
+      }
+      // ... 다른 노드 타입 처리
+    });
+  };
+
+  useEffect(() => {
+    wordRefs.current.forEach((wordEl) => {
+      if (wordEl) {
+        gsap.to(wordEl, {
+          scrollTrigger: {
+            trigger: wordEl,
+            toggleActions: "restart none restart reset",
+          },
+          color: "#000",
+          duration: Math.random() + 2,
+          ease: "expo.out",
+        });
+      }
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  return <>{processChildren(children)}</>;
+}
+```
+
+이것은 읽으면서 색상 단어가 점진적으로 검은색으로 페이드되는 미묘하고 매력적인 효과를 만들어 진행감과 완성감을 만듭니다.
+
+## 후처리 효과
+
+오로라 효과는 질감과 따뜻함을 추가하기 위해 최소한의 후처리를 사용합니다:
+
+- **노이즈**: 미묘한 그레인 추가 (`opacity={0.1}`)
+- **세피아**: 따뜻함 추가 (`intensity={0.2}`)
+
+이러한 효과는 성능 영향을 최소화하면서도 시각적 깊이를 추가하기 위해 극도로 낮은 해상도(`resolutionScale={0.000001}`)로 적용됩니다.
+
+## 디자인 프로세스: 컨셉에서 구현까지
+
+오로라의 디자인 프로세스는 반복적이었으며, 각 버전이 감정적 목표에 더 가까워졌습니다.
+
+### 초기 컨셉
+
+여러 시각적 컨셉으로 시작했습니다:
+- 복잡한 3D 지오메트리 (너무 무거움)
+- 파티클 시스템 (너무 혼란스러움)
+- 단순한 그라디언트 (너무 정적)
+
+오로라 컨셉은 감정이 무엇인지 생각하는 것에서 나타났습니다—항상 존재하지만 끊임없이 변화하는 것. 돌파구는 색상 채널에서 노이즈를 **빼는** 것이 특징적인 오로라 모양을 만든다는 것을 깨달은 것이었습니다.
+
+### 반복과 정제
+
+각 반복은 다음에 초점을 맞췄습니다:
+1. **움직임 품질**: 자연스럽게 느껴지는가? (Simplex 노이즈가 이것을 해결)
+2. **색상 조화**: 색상이 감정적으로 함께 작동하는가? (색조 이동이 변화를 허용)
+3. **성능**: 부드럽게 실행될 수 있는가? (DPR 제어와 같은 최적화)
+4. **가독성**: 콘텐츠를 향상시키는가, 방해하는가? (미묘한 후처리)
+
+최종 버전은 이러한 모든 우려를 균형 있게 다루며, 기술적으로 인상적이면서도 감정적으로 공명하는 것을 만듭니다.
+
+## 배운 점
+
+### 디자인 도구로서의 코드
+
+이 프로젝트는 코드가 단순히 디자인을 구현하는 것이 아니라 디자인 도구 자체라는 것을 강화했습니다. 코드에서 빠르게 반복하고, 셰이더 매개변수를 조정하고, 즉시 결과를 볼 수 있는 능력은 올바른 감정적 톤을 찾는 데 중요했습니다.
+
+### 감정적 디자인 원칙
+
+1. **스펙터클보다 미묘함**: 오로라는 존재하지만 결코 압도적이지 않습니다
+2. **일관성**: 시각적 언어가 메시지를 강화해야 합니다
+3. **성능이 중요합니다**: 끊기는 애니메이션은 감정적 연결을 깨뜨립니다
+4. **맥락이 핵심입니다**: 게임에 작동하는 것이 치료에는 작동하지 않을 수 있습니다
+
+### 노이즈 함수의 힘
+
+Simplex 노이즈는 이 프로젝트에 완벽한 도구였습니다. 혼란스럽지 않으면서 살아있는 것처럼 느껴지는 자연스럽고 유기적인 패턴을 만듭니다. 핵심 통찰은 노이즈를 색상에 **추가**하는 것이 아니라 **빼는** 데 사용하여 깊이와 흐름을 만드는 것이었습니다.
+
+### React Three Fiber의 이점
+
+원시 Three.js 대신 React Three Fiber를 사용하면 코드가 더 유지 관리 가능하고 React 친화적이 되었습니다. 애니메이션을 위한 `useFrame` 훅과 선언적 컴포넌트 구조는 나머지 Next.js 애플리케이션과 통합하기 더 쉽게 만들었습니다.
+
+## 기술 스택
+
+- **Next.js** – 사이트 구조를 위한 프레임워크
+- **React Three Fiber** – Three.js의 React 렌더러
+- **커스텀 GLSL 셰이더** – Simplex 노이즈를 사용한 오로라 시각 효과
+- **GSAP** – 단어별 색상 애니메이션
+- **Resend** – 연락처 양식 이메일 기능
+- **@react-three/postprocessing** – 후처리 효과
+
+## 마무리
+
+오로라를 구축하는 것은 기술적 기술과 감정적 디자인이 분리되어 있지 않다는 것을 가르쳐주었습니다—그들은 깊이 연결되어 있습니다. 흐르는 색상을 만드는 Simplex 노이즈, 감정적 변화를 허용하는 색조 이동, 부드러움을 보장하는 성능 최적화—이러한 모든 기술적 결정이 감정적 영향에 기여합니다.
+
+감정을 전달해야 하는 프로젝트에서 작업하는 개발자들을 위해, 제 조언은 다음과 같습니다:
+
+1. **느낌으로 시작하세요**: 사용자가 어떤 감정을 느껴야 하는가?
+2. **은유를 선택하세요**: 어떤 시각적 개념이 그 감정을 나타내는가?
+3. **코드에서 반복하세요**: 코드를 구현 도구뿐만 아니라 디자인 도구로 사용하세요
+4. **실제 사용자와 테스트하세요**: 감정적으로 공명하지 않으면 기술적 완벽함은 아무 의미가 없습니다
+5. **모든 것을 균형 있게**: 성능, 미학, 감정 모두 중요합니다
+
+오로라 웹사이트는 코드가 아름답고, 감정적이며, 의미 있을 수 있다는 것을 보여줍니다—단순히 기능적일 뿐만 아니라. 이것은 개발자로서 우리가 단순히 기능을 구축하는 것이 아니라 경험을 만든다는 것을 상기시킵니다.
+
+읽어주셔서 감사합니다. 라이브 사이트는 [여기서](https://aurora-psychotherapy.vercel.app/) 확인하실 수 있습니다.
